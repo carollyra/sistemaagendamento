@@ -96,11 +96,22 @@ Backend also has `npm start` to run the compiled output from `dist/`.
 Real values live in `.env` files, which are never committed. See `backend/.env.example`
 and `frontend/.env.example` for the expected keys.
 
+## API
+
+| Method | Route            | Auth   | Description                          |
+| ------ | ---------------- | ------ | ------------------------------------ |
+| GET    | `/health`        | –      | Service health check                 |
+| POST   | `/auth/register` | –      | Create a client account, returns JWT |
+| POST   | `/auth/login`    | –      | Log in, returns JWT                  |
+| GET    | `/auth/me`       | Bearer | Current user profile                 |
+
+Protected routes expect the header `Authorization: Bearer <token>`.
+
 ## Roadmap
 
 - [x] 1. Project setup (TypeScript, ESLint/Prettier, env files)
 - [x] 2. Database modeling with Prisma (User, Service, Appointment)
-- [ ] 3. Auth: sign up and login with JWT + bcrypt
+- [x] 3. Auth: sign up and login with JWT + bcrypt
 - [ ] 4. Services CRUD (admin) and appointments with slot conflict rules
 - [ ] 5. Sign up and login screens
 - [ ] 6. Booking flow (service → date → available time)
