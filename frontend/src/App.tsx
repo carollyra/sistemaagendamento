@@ -1,8 +1,20 @@
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { AppLayout } from './components/AppLayout';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+
 export default function App() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-2">
-      <h1 className="text-3xl font-bold text-brand-600">Barbershop Scheduling</h1>
-      <p className="text-sm text-brand-900/70">Frontend setup is ready.</p>
-    </main>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<Home />} />
+      </Route>
+
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }

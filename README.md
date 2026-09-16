@@ -134,7 +134,7 @@ Protected routes expect the header `Authorization: Bearer <token>`.
 - [x] 2. Database modeling with Prisma (User, Service, Appointment)
 - [x] 3. Auth: sign up and login with JWT + bcrypt
 - [x] 4. Services CRUD (admin) and appointments with slot conflict rules
-- [ ] 5. Sign up and login screens
+- [x] 5. Sign up and login screens
 - [ ] 6. Booking flow (service → date → available time)
 - [ ] 7. "My appointments" page with cancel
 - [ ] 8. Admin panel: manage services and view the day's agenda
