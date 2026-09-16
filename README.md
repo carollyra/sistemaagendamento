@@ -72,6 +72,25 @@ Both projects share the same script names:
 
 Backend also has `npm start` to run the compiled output from `dist/`.
 
+### Database scripts (backend)
+
+| Script                 | Description                                  |
+| ---------------------- | -------------------------------------------- |
+| `npm run db:generate`  | Generate the Prisma Client                    |
+| `npm run db:migrate`   | Create and apply a migration (development)    |
+| `npm run db:deploy`    | Apply pending migrations (production)         |
+| `npm run db:seed`      | Seed an admin user and the default services   |
+| `npm run db:studio`    | Open Prisma Studio                            |
+
+## Data model
+
+- **User** — `id`, `name`, `email` (unique), `phone`, `passwordHash`, `role` (`CLIENT` | `ADMIN`)
+- **Service** — `id`, `name` (unique), `description`, `durationMinutes`, `price`, `active`
+- **Appointment** — `id`, `userId`, `serviceId`, `startsAt`, `endsAt`,
+  `status` (`SCHEDULED` | `COMPLETED` | `CANCELLED`), `notes`
+
+`endsAt` is derived from the service duration and is used to detect slot conflicts.
+
 ## Environment variables
 
 Real values live in `.env` files, which are never committed. See `backend/.env.example`
@@ -80,7 +99,7 @@ and `frontend/.env.example` for the expected keys.
 ## Roadmap
 
 - [x] 1. Project setup (TypeScript, ESLint/Prettier, env files)
-- [ ] 2. Database modeling with Prisma (User, Service, Appointment)
+- [x] 2. Database modeling with Prisma (User, Service, Appointment)
 - [ ] 3. Auth: sign up and login with JWT + bcrypt
 - [ ] 4. Services CRUD (admin) and appointments with slot conflict rules
 - [ ] 5. Sign up and login screens
