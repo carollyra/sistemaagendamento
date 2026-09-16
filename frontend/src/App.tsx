@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppLayout } from './components/AppLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import Book from './pages/Book';
+import MyAppointments from './pages/MyAppointments';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -17,6 +18,7 @@ export default function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/book" element={<Book />} />
+          <Route path="/appointments" element={<MyAppointments />} />
         </Route>
       </Route>
 
