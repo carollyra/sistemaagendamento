@@ -1,5 +1,7 @@
 import { Router } from 'express';
+import { appointmentRoutes } from './appointment.routes.js';
 import { authRoutes } from './auth.routes.js';
+import { serviceRoutes } from './service.routes.js';
 
 export const routes = Router();
 
@@ -8,3 +10,5 @@ routes.get('/health', (_req, res) => {
 });
 
 routes.use('/auth', authRoutes);
+routes.use('/services', serviceRoutes);
+routes.use('/appointments', appointmentRoutes);

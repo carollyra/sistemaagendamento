@@ -27,3 +27,18 @@ export function requireAdmin(req: Request, _res: Response, next: NextFunction) {
 
   next();
 }
+
+/** Attaches `req.user` when a valid token is present, but never blocks the request. */
+export function optionalAuthenticate(req: Request, _res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+
+  if (authHeader?.startsWith('Bearer ')) {
+    try {
+      req.user = verifyToken(authHeader.slice('Bearer '.length).trim());
+    } catch {
+      // ignore invalid tokens on public routes
+    }
+  }
+
+  next();
+}
