@@ -105,14 +105,35 @@ and `frontend/.env.example` for the expected keys.
 | POST   | `/auth/login`    | –      | Log in, returns JWT                  |
 | GET    | `/auth/me`       | Bearer | Current user profile                 |
 
+| GET    | `/services`                     | –      | List services (`?includeInactive=true` for admins) |
+| GET    | `/services/:id`                 | –      | Service details                                    |
+| POST   | `/services`                     | Admin  | Create a service                                   |
+| PATCH  | `/services/:id`                 | Admin  | Update a service                                   |
+| DELETE | `/services/:id`                 | Admin  | Delete, or deactivate if it has appointments       |
+| GET    | `/appointments/availability`    | –      | Free slots for `?serviceId=&date=YYYY-MM-DD`       |
+| POST   | `/appointments`                 | Bearer | Book a slot                                        |
+| GET    | `/appointments/me`              | Bearer | Appointments of the logged in user                 |
+| PATCH  | `/appointments/:id/cancel`      | Bearer | Cancel (owner or admin)                            |
+| GET    | `/appointments/agenda`          | Admin  | Day agenda (`?date=`, defaults to today)           |
+| PATCH  | `/appointments/:id/status`      | Admin  | Change status                                      |
+
 Protected routes expect the header `Authorization: Bearer <token>`.
+
+## Booking rules
+
+- Appointments must start in the future and fit inside the business hours
+  (`BUSINESS_*` variables, default Mon–Sat 09:00–19:00, `America/Sao_Paulo`).
+- `endsAt` is derived from the service duration.
+- A slot is rejected with `409` when it overlaps another `SCHEDULED` appointment;
+  the check runs inside a serializable transaction.
+- Cancelled appointments release the slot again.
 
 ## Roadmap
 
 - [x] 1. Project setup (TypeScript, ESLint/Prettier, env files)
 - [x] 2. Database modeling with Prisma (User, Service, Appointment)
 - [x] 3. Auth: sign up and login with JWT + bcrypt
-- [ ] 4. Services CRUD (admin) and appointments with slot conflict rules
+- [x] 4. Services CRUD (admin) and appointments with slot conflict rules
 - [ ] 5. Sign up and login screens
 - [ ] 6. Booking flow (service → date → available time)
 - [ ] 7. "My appointments" page with cancel
