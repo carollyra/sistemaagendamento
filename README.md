@@ -136,5 +136,5 @@ Protected routes expect the header `Authorization: Bearer <token>`.
 - [x] 4. Services CRUD (admin) and appointments with slot conflict rules
 - [x] 5. Sign up and login screens
 - [x] 6. Booking flow (service → date → available time)
-- [ ] 7. "My appointments" page with cancel
+- [x] 7. "My appointments" page with cancel
 - [ ] 8. Admin panel: manage services and view the day's agenda
