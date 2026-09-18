@@ -51,3 +51,14 @@ export async function getDayAgenda(date?: string): Promise<{
 
   return data;
 }
+
+export async function updateAppointmentStatus(
+  id: string,
+  status: 'SCHEDULED' | 'COMPLETED' | 'CANCELLED',
+): Promise<Appointment> {
+  const { data } = await api.patch<{ appointment: Appointment }>(`/appointments/${id}/status`, {
+    status,
+  });
+
+  return data.appointment;
+}

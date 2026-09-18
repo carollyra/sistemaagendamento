@@ -128,6 +128,17 @@ Protected routes expect the header `Authorization: Bearer <token>`.
   the check runs inside a serializable transaction.
 - Cancelled appointments release the slot again.
 
+## Frontend routes
+
+| Route           | Access | Description                                      |
+| --------------- | ------ | ------------------------------------------------ |
+| `/`             | Public | Landing page                                     |
+| `/login`        | Public | Sign in                                          |
+| `/register`     | Public | Create a client account                          |
+| `/book`         | Client | Booking flow: service → date → time              |
+| `/appointments` | Client | Upcoming bookings and history, with cancelling   |
+| `/admin`        | Admin  | Day agenda and service management                |
+
 ## Roadmap
 
 - [x] 1. Project setup (TypeScript, ESLint/Prettier, env files)
@@ -137,4 +148,4 @@ Protected routes expect the header `Authorization: Bearer <token>`.
 - [x] 5. Sign up and login screens
 - [x] 6. Booking flow (service → date → available time)
 - [x] 7. "My appointments" page with cancel
-- [ ] 8. Admin panel: manage services and view the day's agenda
+- [x] 8. Admin panel: manage services and view the day's agenda

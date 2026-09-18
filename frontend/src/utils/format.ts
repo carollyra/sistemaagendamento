@@ -66,3 +66,25 @@ export function buildDayOptions(days: number): { value: string; label: string }[
 
   return options;
 }
+
+/** Current day in the browser timezone, formatted as YYYY-MM-DD. */
+export function todayISO(): string {
+  const now = new Date();
+
+  return [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, '0'),
+    String(now.getDate()).padStart(2, '0'),
+  ].join('-');
+}
+
+export function formatLongDate(isoDate: string): string {
+  const [year, month, day] = isoDate.split('-').map(Number);
+
+  return new Intl.DateTimeFormat('en-GB', {
+    weekday: 'long',
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(year, month - 1, day));
+}
