@@ -1,49 +1,72 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Typography */
-  --font-display: 'Bricolage Grotesque', 'Sora', ui-sans-serif, system-ui, sans-serif;
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  /* SF Pro when the device has it, Inter Tight everywhere else. */
+  --font-display:
+    -apple-system, 'SF Pro Display', BlinkMacSystemFont, 'Inter Tight', ui-sans-serif, sans-serif;
+  --font-sans: -apple-system, 'SF Pro Text', BlinkMacSystemFont, 'Inter', ui-sans-serif, sans-serif;
 
-  /* Deep, slightly blue-tinted neutrals */
-  --color-ink-950: #05070c;
-  --color-ink-900: #080b13;
-  --color-ink-850: #0b0f1a;
-  --color-ink-800: #101623;
-  --color-ink-700: #161d2c;
-  --color-ink-600: #1e2736;
-  --color-ink-500: #2b3546;
+  /* Precise neutrals: cool, dense, never washed out. */
+  --color-ink-950: #050608;
+  --color-ink-900: #08090c;
+  --color-ink-850: #0b0d11;
+  --color-ink-800: #101318;
+  --color-ink-700: #161a21;
+  --color-ink-600: #1e232c;
+  --color-ink-500: #2a3039;
 
-  --color-mist-500: #6b7686;
-  --color-mist-400: #8a94a5;
-  --color-mist-300: #a9b2c1;
-  --color-mist-200: #ccd3de;
-  --color-mist-100: #e9edf4;
+  --color-mist-500: #6e7681;
+  --color-mist-400: #8b939e;
+  --color-mist-300: #adb4bd;
+  --color-mist-200: #d2d7dd;
+  --color-mist-100: #f2f4f7;
 
-  /* Single accent: refined, muted gold */
-  --color-gold-200: #f6e6c4;
-  --color-gold-300: #eed8a6;
-  --color-gold-400: #dfc07d;
-  --color-gold-500: #cfa85e;
-  --color-gold-600: #b08a44;
-  --color-gold-700: #8a6b32;
+  /* Accent, used only on active elements. */
+  --color-gold-200: #f7ead0;
+  --color-gold-300: #eddcb6;
+  --color-gold-400: #dcc490;
+  --color-gold-500: #c9a96a;
+  --color-gold-600: #a98c52;
+  --color-gold-700: #7f6939;
 
-  --radius-card: 1.25rem;
-  --radius-panel: 1.75rem;
-  --radius-media: 1.5rem;
+  /* Rigid type scale */
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1;
+  --text-eyebrow--letter-spacing: 0.18em;
+  --text-meta: 0.75rem;
+  --text-meta--line-height: 1.5;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.65;
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.2;
+  --text-title--letter-spacing: -0.02em;
+  --text-heading: 2rem;
+  --text-heading--line-height: 1.1;
+  --text-heading--letter-spacing: -0.03em;
+  --text-display: 3.25rem;
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.04em;
+  --text-hero: 4.25rem;
+  --text-hero--line-height: 0.94;
+  --text-hero--letter-spacing: -0.045em;
 
-  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -16px rgb(0 0 0 / 0.8);
-  --shadow-panel: 0 24px 70px -32px rgb(0 0 0 / 0.9);
-  --shadow-lift: 0 18px 40px -24px rgb(0 0 0 / 0.9);
+  --radius-card: 1.125rem;
+  --radius-panel: 1.5rem;
+  --radius-media: 1.25rem;
+
+  /* Long, soft, neutral shadows. */
+  --shadow-soft: 0 1px 1px rgb(0 0 0 / 0.5), 0 12px 32px -18px rgb(0 0 0 / 0.9);
+  --shadow-panel: 0 2px 2px rgb(0 0 0 / 0.4), 0 40px 80px -40px rgb(0 0 0 / 1);
+  --shadow-lift: 0 24px 60px -32px rgb(0 0 0 / 0.95);
 
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 
   --animate-fade-up: fade-up 0.5s var(--ease-smooth) both;
   --animate-fade-in: fade-in 0.4s var(--ease-smooth) both;
-  --animate-scale-in: scale-in 0.2s var(--ease-smooth) both;
-  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-scale-in: scale-in 0.22s var(--ease-smooth) both;
   --animate-fade-out: fade-out 0.15s var(--ease-smooth) both;
   --animate-scale-out: scale-out 0.15s var(--ease-smooth) both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
 
   @keyframes fade-up {
     from {
@@ -65,6 +88,15 @@
     }
   }
 
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
   @keyframes scale-in {
     from {
       opacity: 0;
@@ -73,15 +105,6 @@
     to {
       opacity: 1;
       transform: none;
-    }
-  }
-
-  @keyframes fade-out {
-    from {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
     }
   }
 
@@ -113,16 +136,16 @@
   }
 
   body {
-    @apply bg-ink-950 text-mist-200 font-sans antialiased;
-    font-feature-settings: 'cv02', 'cv03', 'cv04';
+    @apply bg-ink-950 text-mist-300 font-sans text-body antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'ss01';
   }
 
   h1,
   h2,
   h3,
   h4 {
-    @apply text-mist-100 font-display tracking-[-0.03em];
-    font-weight: 700;
+    @apply text-mist-100 font-display;
+    font-weight: 600;
   }
 
   ::selection {
@@ -130,10 +153,9 @@
   }
 
   :focus-visible {
-    @apply outline-gold-500/70 rounded-md outline-2 outline-offset-2;
+    @apply outline-gold-500/60 rounded-md outline-2 outline-offset-2;
   }
 
-  /* Honour the system setting: no movement, but everything stays usable. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -159,38 +181,91 @@
     border-radius: 9999px;
     border: 2px solid var(--color-ink-950);
   }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-ink-500);
-  }
 }
 
 @layer components {
-  /* Layered surface used by cards, panels and list rows. */
-  .surface {
-    @apply rounded-card border-ink-700/70 bg-ink-850/70 shadow-soft border;
+  /*
+   * Real glass: heavy blur with saturation, a nearly transparent fill and a
+   * hairline border. The ::before draws the light line along the top edge.
+   */
+  .glass {
+    @apply rounded-card relative border border-white/[0.07] bg-white/[0.022];
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    box-shadow: var(--shadow-soft);
   }
 
-  .surface-hover {
-    @apply hover:border-ink-500 hover:bg-ink-800/80 transition duration-300;
+  .glass::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 1px;
+    border-radius: inherit;
+    background: linear-gradient(
+      to right,
+      transparent 8%,
+      rgb(255 255 255 / 0.16) 50%,
+      transparent 92%
+    );
+    pointer-events: none;
+  }
+
+  .glass-strong {
+    @apply border border-white/[0.09] bg-white/[0.04];
+    backdrop-filter: blur(48px) saturate(180%);
+    -webkit-backdrop-filter: blur(48px) saturate(180%);
+  }
+
+  /* Solid sibling of .glass for long lists, where blur would cost too much. */
+  .surface {
+    @apply rounded-card bg-ink-900 relative border border-white/[0.06];
+    box-shadow: var(--shadow-soft);
+  }
+
+  .surface::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 1px;
+    border-radius: inherit;
+    background: linear-gradient(
+      to right,
+      transparent 8%,
+      rgb(255 255 255 / 0.1) 50%,
+      transparent 92%
+    );
+    pointer-events: none;
   }
 
   .field {
-    @apply border-ink-600 bg-ink-900/80 text-mist-100 placeholder:text-mist-500 focus:border-gold-500/70 focus:ring-gold-500/15 w-full rounded-xl border px-3.5 py-3 text-sm transition duration-200 focus:ring-4 focus:outline-none;
+    @apply border-ink-600 bg-ink-900 text-mist-100 placeholder:text-mist-500 focus:border-gold-500/60 focus:ring-gold-500/10 w-full rounded-xl border px-3.5 py-3 text-sm transition duration-200 focus:ring-4 focus:outline-none;
   }
 
-  .hairline {
-    @apply border-ink-700/70;
+  .scroll-row {
+    @apply -mx-1 flex snap-x snap-mandatory gap-2 overflow-x-auto px-1 pb-1;
+    scrollbar-width: none;
   }
 
-  /* Soft light pooling from the top of the page. */
-  .aurora {
-    background-image:
-      radial-gradient(60rem 30rem at 50% -12rem, rgb(207 168 94 / 0.1), transparent 70%),
-      radial-gradient(40rem 24rem at 90% 0, rgb(43 53 70 / 0.5), transparent 65%);
+  .scroll-row::-webkit-scrollbar {
+    display: none;
   }
 
-  /* Radix data-state driven enter/exit animations. */
+  /* One treatment for every photo: darker, contrastier, desaturated. */
+  .photo {
+    filter: brightness(0.78) contrast(1.18) saturate(0.72);
+  }
+
+  /* Always the same direction: dark at the bottom, clear at the top. */
+  .photo-scrim {
+    background-image: linear-gradient(
+      to top,
+      rgb(5 6 8 / 0.98) 0%,
+      rgb(5 6 8 / 0.92) 32%,
+      rgb(5 6 8 / 0.62) 66%,
+      rgb(5 6 8 / 0.28) 100%
+    );
+  }
+
   .anim-overlay {
     @apply data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in;
   }
@@ -199,37 +274,9 @@
     @apply data-[state=closed]:animate-scale-out data-[state=open]:animate-scale-in;
   }
 
-  /* Horizontal pickers: scrollable, no visible scrollbar. */
-  .scroll-row {
-    @apply -mx-1 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-1 pb-1;
-    scrollbar-width: none;
-  }
-
-  .scroll-row::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Readable text over photography. */
-  .photo-scrim {
-    background-image: linear-gradient(
-      to top,
-      rgb(5 7 12 / 0.95) 0%,
-      rgb(5 7 12 / 0.75) 35%,
-      rgb(5 7 12 / 0.25) 70%,
-      rgb(5 7 12 / 0.1) 100%
-    );
-  }
-
-  .photo-scrim-side {
-    background-image: linear-gradient(
-      to right,
-      rgb(5 7 12 / 0.92) 0%,
-      rgb(5 7 12 / 0.6) 45%,
-      rgb(5 7 12 / 0.2) 100%
-    );
-  }
-
-  .text-gradient {
-    @apply from-mist-100 via-mist-100 to-gold-300 bg-gradient-to-br bg-clip-text text-transparent;
+  /* Weight contrast inside a single headline. */
+  .text-light {
+    font-weight: 300;
+    @apply text-mist-400;
   }
 }

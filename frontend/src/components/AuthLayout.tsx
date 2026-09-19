@@ -24,7 +24,7 @@ export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProp
         <img
           src={images.auth()}
           alt="Barbeiro atendendo um cliente"
-          className="absolute inset-0 size-full object-cover"
+          className="photo absolute inset-0 size-full object-cover"
         />
         <div className="photo-scrim absolute inset-0" aria-hidden />
         <div className="bg-ink-950/45 absolute inset-0" aria-hidden />
@@ -34,9 +34,9 @@ export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProp
         </div>
 
         <div className="relative max-w-md">
-          <p className="text-gold-400 text-xs font-medium tracking-[0.2em] uppercase">Desde 2014</p>
-          <h2 className="font-display mt-4 text-4xl leading-[0.95] font-extrabold tracking-[-0.04em] text-balance text-white">
-            Corte impecável, <span className="text-gold-400">agendado em segundos</span>
+          <p className="text-gold-400 text-eyebrow font-medium uppercase">Desde 2014</p>
+          <h2 className="font-display text-display mt-4 font-semibold text-balance text-white">
+            Corte impecável, <span className="text-light text-mist-300">agendado em segundos</span>
           </h2>
           <p className="text-mist-200 mt-4 leading-relaxed">
             Um jeito mais tranquilo de cuidar da cadeira. Escolha o serviço, pegue um horário e
@@ -64,7 +64,7 @@ export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProp
             <Logo />
           </div>
 
-          <h1 className="font-display text-3xl font-extrabold tracking-[-0.03em]">{title}</h1>
+          <h1 className="font-display text-heading font-semibold">{title}</h1>
           <p className="text-mist-400 mt-2 text-sm leading-relaxed">{subtitle}</p>
 
           <div className="mt-8">{children}</div>

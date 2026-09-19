@@ -61,19 +61,19 @@ export default function MyAppointments() {
     <section className="flex flex-col gap-10">
       <header className="rounded-panel relative overflow-hidden">
         <img
-          src={images.styling({ width: 1400, height: 500 })}
+          src={images.band({ width: 1600, height: 460 })}
           alt=""
-          className="absolute inset-0 size-full object-cover"
+          className="photo absolute inset-0 size-full object-cover"
         />
         <div className="photo-scrim absolute inset-0" aria-hidden />
 
         <div className="relative flex flex-col gap-5 p-6 pt-24 sm:flex-row sm:items-end sm:justify-between sm:p-8 sm:pt-32">
           <div className="flex flex-col gap-2">
-            <p className="text-gold-400 text-xs font-medium tracking-[0.2em] uppercase">
-              Sua cadeira
-            </p>
-            <h1 className="text-3xl font-extrabold text-white sm:text-4xl">Meus agendamentos</h1>
-            <p className="text-mist-200 max-w-lg text-sm leading-relaxed">
+            <p className="text-gold-400 text-eyebrow font-medium uppercase">Sua cadeira</p>
+            <h1 className="text-heading sm:text-display font-semibold text-white">
+              Meus <span className="text-light text-mist-300">agendamentos</span>
+            </h1>
+            <p className="text-mist-300 text-body max-w-md">
               Seus próximos horários e tudo o que você já agendou.
             </p>
           </div>
@@ -95,9 +95,7 @@ export default function MyAppointments() {
         <>
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-4">
-              <h2 className="text-mist-300 text-xs font-medium tracking-[0.2em] uppercase">
-                Próximos
-              </h2>
+              <h2 className="text-mist-400 text-eyebrow font-medium uppercase">Próximos</h2>
               <span className="bg-ink-700 h-px flex-1" aria-hidden />
               <span className="text-mist-500 text-xs tabular-nums">{upcoming.length}</span>
             </div>
@@ -133,7 +131,7 @@ export default function MyAppointments() {
                       layout
                       variants={staggerItem}
                       exit={{ opacity: 0, y: -8 }}
-                      whileHover={{ y: -3 }}
+                      whileHover={{ scale: 1.01 }}
                       transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
                     >
                       <AppointmentCard
@@ -158,9 +156,7 @@ export default function MyAppointments() {
           {past.length > 0 && (
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-4">
-                <h2 className="text-mist-300 text-xs font-medium tracking-[0.2em] uppercase">
-                  Histórico
-                </h2>
+                <h2 className="text-mist-400 text-eyebrow font-medium uppercase">Histórico</h2>
                 <span className="bg-ink-700 h-px flex-1" aria-hidden />
                 <span className="text-mist-500 text-xs tabular-nums">{past.length}</span>
               </div>
@@ -186,9 +182,7 @@ export default function MyAppointments() {
       {services.length > 0 && (
         <section className="flex flex-col gap-4">
           <div className="flex items-center gap-4">
-            <h2 className="text-mist-300 text-xs font-medium tracking-[0.2em] uppercase">
-              Agende de novo
-            </h2>
+            <h2 className="text-mist-400 text-eyebrow font-medium uppercase">Agende de novo</h2>
             <span className="bg-ink-700 h-px flex-1" aria-hidden />
           </div>
 
@@ -199,7 +193,7 @@ export default function MyAppointments() {
             animate="visible"
           >
             {services.map((service) => (
-              <motion.li key={service.id} variants={staggerItem} whileHover={{ y: -4 }}>
+              <motion.li key={service.id} variants={staggerItem} whileHover={{ scale: 1.02 }}>
                 <Link
                   to="/book"
                   className="group rounded-media border-ink-700/70 bg-ink-850 hover:border-ink-500 ease-smooth flex h-full flex-col overflow-hidden border transition-colors duration-300"
@@ -209,7 +203,7 @@ export default function MyAppointments() {
                       src={serviceImage(service.name, { width: 400, height: 260 })}
                       alt=""
                       loading="lazy"
-                      className="ease-smooth size-full object-cover transition duration-500 group-hover:scale-105"
+                      className="photo ease-smooth size-full object-cover transition duration-700 group-hover:scale-[1.04]"
                     />
                     <div className="photo-scrim absolute inset-0 opacity-80" aria-hidden />
                     <p className="font-display absolute right-3 bottom-2 left-3 truncate text-sm font-bold tracking-tight text-white">

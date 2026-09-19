@@ -11,7 +11,7 @@ import { ServiceFormDialog } from '../../components/admin/ServiceFormDialog';
 import { Badge } from '../../components/ui/badge';
 import { useAdminServices } from '../../hooks/useAdminServices';
 import { serviceImage } from '../../lib/images';
-import { staggerContainer, staggerItem } from '../../lib/motion';
+import { spring, staggerContainer, staggerItem } from '../../lib/motion';
 import { getErrorMessage } from '../../services/api';
 import * as serviceService from '../../services/service.service';
 import type { Service } from '../../types';
@@ -110,7 +110,7 @@ export function AdminServices() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="font-display text-xl font-semibold">Catálogo de serviços</h2>
+          <h2 className="font-display text-title font-semibold">Catálogo de serviços</h2>
           <p className="text-mist-500 mt-1 text-sm">
             {services.length} {services.length === 1 ? 'serviço' : 'serviços'} · os inativos ficam
             ocultos para os clientes
@@ -148,9 +148,9 @@ export function AdminServices() {
                 layout
                 variants={staggerItem}
                 exit={{ opacity: 0, y: -8 }}
-                whileHover={{ y: -3 }}
-                transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-                className={`surface surface-hover flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between ${
+                whileHover={{ scale: 1.01 }}
+                transition={spring}
+                className={`surface flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between ${
                   service.active ? '' : 'opacity-65'
                 }`}
               >
@@ -160,7 +160,7 @@ export function AdminServices() {
                       src={serviceImage(service.name, { width: 200, height: 200 })}
                       alt=""
                       loading="lazy"
-                      className="size-full object-cover"
+                      className="photo size-full object-cover"
                     />
                   </div>
 

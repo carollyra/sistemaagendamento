@@ -137,15 +137,19 @@ The frontend ships with a small, self-contained design system in
 
 - **Palette** — deep blue-tinted neutrals (`ink-*`), muted text greys (`mist-*`)
   and a single accent, a refined gold (`gold-*`).
-- **Typography** — Bricolage Grotesque for headings (`font-display`, negative
-  tracking, heavy weights), Inter for body text.
-- **Surfaces** — `.surface` / `.surface-hover` for layered cards, `.field` for
-  inputs, `.aurora` for the soft background glow.
+- **Typography** — SF Pro when the device has it, Inter Tight as the web
+  fallback. Rigid scale (`text-eyebrow` → `text-hero`) with negative tracking on
+  the large sizes and weight contrast inside headlines (`.text-light`).
+- **Surfaces** — `.glass` (blur 40px + saturate 180%, 1px white border and a
+  gradient light line on the top edge) for chrome and panels, `.surface` as its
+  solid sibling for long lists, `.field` for inputs.
 - **Motion** — `animate-fade-up`, `animate-fade-in`, `animate-scale-in` and a
   shimmer used by the skeleton loaders.
 - **Photography** — curated Unsplash images served straight from the CDN
-  (`frontend/src/lib/images.ts`, no API key). Text over photos always sits on a
-  `.photo-scrim` gradient.
+  (`frontend/src/lib/images.ts`, no API key): dark, high contrast, detail driven
+  (chair, clippers, razor, tools) with no faces in the foreground. Every `<img>`
+  carries the `.photo` class (one brightness/contrast/saturation treatment) and
+  every overlay uses the same bottom-up `.photo-scrim` gradient.
 - **Dense pickers** — `DateStrip` (scrollable day selector) and `TimePills`
   (scrollable time slots), both with a filled state in the accent colour.
 
@@ -156,9 +160,12 @@ The frontend ships with a small, self-contained design system in
   to the palette above instead of bringing their own theme: Dialog, Badge,
   Skeleton, Input/Textarea, Label, Select and the Sonner toaster.
 - **Radix UI** powers the accessible primitives behind those components.
-- **framer-motion** handles the step transitions, list stagger and card hover
-  lift. `MotionConfig reducedMotion="user"` plus a `prefers-reduced-motion` block
-  in the CSS disable movement for users who ask for it.
+- **framer-motion** handles the step transitions, list stagger (50 ms apart),
+  `layoutId` pills on the date/time pickers and admin tabs, and a 1.02 hover
+  scale on cards. Everything runs on one spring (stiffness 300, damping 30,
+  mass 0.8 — `src/lib/motion.ts`). `MotionConfig reducedMotion="user"` plus a
+  `prefers-reduced-motion` block in the CSS disable movement for users who ask
+  for it.
 - **lucide-react** provides the icon set.
 - **sonner** shows the result of actions (booking, cancelling, service changes);
   inline alerts are reserved for load failures and empty states.
@@ -188,3 +195,4 @@ The frontend ships with a small, self-contained design system in
 - [x] 10. shadcn/ui primitives, toasts and motion
 - [x] 11. Brazilian Portuguese interface and "Fade Barbearia" branding
 - [x] 12. Premium visual pass: photography, denser pickers, new type pairing
+- [x] 13. Deep refinement: glass material, spring motion, rigid type scale

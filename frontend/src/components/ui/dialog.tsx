@@ -26,7 +26,10 @@ function DialogOverlay({
   return (
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
-      className={cn('bg-ink-950/80 anim-overlay fixed inset-0 z-50 backdrop-blur-sm', className)}
+      className={cn(
+        'anim-overlay fixed inset-0 z-50 bg-[rgb(5_6_8/0.82)] backdrop-blur-md',
+        className,
+      )}
       {...props}
     />
   );
@@ -46,7 +49,7 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          'border-ink-700 bg-ink-850 rounded-panel shadow-panel anim-content fixed top-1/2 left-1/2 z-50 grid max-h-[90vh] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-5 overflow-y-auto border p-6 outline-none sm:max-w-lg sm:p-7',
+          'glass glass-strong rounded-panel shadow-panel anim-content fixed top-1/2 left-1/2 z-50 grid max-h-[90vh] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-5 overflow-y-auto p-6 outline-none sm:max-w-lg sm:p-7',
           className,
         )}
         {...props}
@@ -81,7 +84,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="dialog-footer"
       className={cn(
-        'border-ink-700/70 flex flex-col-reverse gap-2.5 border-t pt-5 sm:flex-row sm:justify-end',
+        'flex flex-col-reverse gap-2.5 border-t border-white/[0.06] pt-5 sm:flex-row sm:justify-end',
         className,
       )}
       {...props}
@@ -93,7 +96,7 @@ function DialogTitle({ className, ...props }: React.ComponentProps<typeof Dialog
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn('font-display text-mist-100 text-lg leading-tight font-semibold', className)}
+      className={cn('font-display text-mist-100 text-title font-semibold', className)}
       {...props}
     />
   );

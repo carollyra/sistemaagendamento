@@ -32,7 +32,7 @@ export function Header() {
   }
 
   return (
-    <header className="border-ink-800/80 bg-ink-950/70 fixed inset-x-0 top-0 z-40 border-b backdrop-blur-xl">
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/[0.06] bg-[rgb(5_6_8/0.72)] [backdrop-filter:blur(40px)_saturate(180%)]">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-6 px-5 sm:px-8">
         <Logo />
 
@@ -47,7 +47,7 @@ export function Header() {
         <div className="hidden items-center gap-3 md:flex">
           {isAuthenticated ? (
             <>
-              <div className="border-ink-700 bg-ink-850 flex items-center gap-2.5 rounded-full border py-1 pr-4 pl-1">
+              <div className="flex items-center gap-2.5 rounded-full border border-white/[0.07] bg-white/[0.03] py-1 pr-4 pl-1">
                 <Avatar name={user?.name ?? ''} size="sm" />
                 <span className="flex flex-col leading-tight">
                   <span className="text-mist-500 text-[10px]">{greeting()},</span>
@@ -77,7 +77,7 @@ export function Header() {
           onClick={() => setIsMenuOpen((open) => !open)}
           aria-expanded={isMenuOpen}
           aria-label="Abrir menu"
-          className="border-ink-700 bg-ink-800/60 text-mist-200 hover:border-ink-500 flex size-9 items-center justify-center rounded-xl border transition md:hidden"
+          className="text-mist-200 flex size-9 items-center justify-center rounded-full border border-white/[0.07] bg-white/[0.03] transition hover:border-white/[0.16] md:hidden"
         >
           {isMenuOpen ? (
             <X className="size-4.5" aria-hidden />
@@ -88,7 +88,7 @@ export function Header() {
       </div>
 
       {isMenuOpen && (
-        <div className="border-ink-800 bg-ink-950/95 animate-fade-in border-t px-5 py-4 md:hidden">
+        <div className="animate-fade-in border-t border-white/[0.06] bg-[rgb(5_6_8/0.95)] px-5 py-4 [backdrop-filter:blur(40px)_saturate(180%)] md:hidden">
           <nav className="flex flex-col gap-1">
             {links.map((link) => (
               <NavLink

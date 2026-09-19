@@ -12,7 +12,7 @@ import { StepIndicator } from '../components/StepIndicator';
 import { Textarea } from '../components/Textarea';
 import { TimePills } from '../components/TimePills';
 import { serviceImage } from '../lib/images';
-import { staggerContainer, staggerItem, stepVariants } from '../lib/motion';
+import { spring, staggerContainer, staggerItem, stepVariants } from '../lib/motion';
 import { getErrorMessage } from '../services/api';
 import * as appointmentService from '../services/appointment.service';
 import type { AvailabilitySlot } from '../services/appointment.service';
@@ -55,7 +55,7 @@ function SelectionSummary({ service }: { service: Service }) {
         src={serviceImage(service.name, { width: 200, height: 200 })}
         alt=""
         loading="lazy"
-        className="size-12 rounded-xl object-cover"
+        className="photo size-12 rounded-xl object-cover"
       />
       <div className="min-w-0">
         <p className="font-display truncate text-sm font-bold tracking-tight">{service.name}</p>
@@ -172,11 +172,11 @@ export default function Book() {
   return (
     <section className="flex flex-col gap-10">
       <header className="flex flex-col gap-3">
-        <p className="text-gold-500 text-xs font-medium tracking-[0.2em] uppercase">
-          Novo agendamento
-        </p>
-        <h1 className="text-3xl font-semibold sm:text-4xl">Agende sua visita</h1>
-        <p className="text-mist-400 max-w-lg text-sm leading-relaxed">
+        <p className="text-gold-500 text-eyebrow font-medium uppercase">Novo agendamento</p>
+        <h1 className="text-heading sm:text-display font-semibold">
+          Agende <span className="text-light">sua visita</span>
+        </h1>
+        <p className="text-mist-400 text-body max-w-md">
           Escolha o serviço, depois o dia e um dos horários livres. A confirmação é na hora.
         </p>
       </header>
@@ -214,8 +214,8 @@ export default function Book() {
                     <motion.div
                       key={service.id}
                       variants={staggerItem}
-                      whileHover={{ y: -3 }}
-                      transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                      whileHover={{ scale: 1.02 }}
+                      transition={spring}
                     >
                       <ServiceCard
                         service={service}

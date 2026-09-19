@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { springSnappy } from '../../lib/motion';
 import { AdminAgenda } from './AdminAgenda';
 import { AdminServices } from './AdminServices';
 
@@ -16,11 +18,11 @@ export default function Admin() {
     <section className="flex flex-col gap-10">
       <header className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col gap-3">
-          <p className="text-gold-500 text-xs font-medium tracking-[0.2em] uppercase">
-            Central de controle
-          </p>
-          <h1 className="text-3xl font-semibold sm:text-4xl">Painel administrativo</h1>
-          <p className="text-mist-400 max-w-lg text-sm leading-relaxed">
+          <p className="text-gold-500 text-eyebrow font-medium uppercase">Central de controle</p>
+          <h1 className="text-heading sm:text-display font-semibold">
+            Painel <span className="text-light">administrativo</span>
+          </h1>
+          <p className="text-mist-400 text-body max-w-md">
             Acompanhe a agenda do dia e mantenha o catálogo de serviços em dia.
           </p>
         </div>
@@ -28,7 +30,7 @@ export default function Admin() {
         <div
           role="tablist"
           aria-label="Seções do painel"
-          className="border-ink-700 bg-ink-850/70 inline-flex gap-1 self-start rounded-xl border p-1"
+          className="inline-flex gap-1 self-start rounded-full border border-white/[0.07] bg-white/[0.03] p-1"
         >
           {TABS.map((item) => (
             <button
@@ -37,13 +39,18 @@ export default function Admin() {
               type="button"
               aria-selected={tab === item.id}
               onClick={() => setTab(item.id)}
-              className={`ease-smooth rounded-lg px-4 py-2 text-sm transition duration-200 ${
-                tab === item.id
-                  ? 'bg-ink-700 text-mist-100 shadow-soft font-medium'
-                  : 'text-mist-400 hover:text-mist-100'
+              className={`ease-smooth relative rounded-full px-4 py-2 text-[13px] transition-colors duration-200 ${
+                tab === item.id ? 'text-mist-100 font-medium' : 'text-mist-400 hover:text-mist-100'
               }`}
             >
-              {item.label}
+              {tab === item.id && (
+                <motion.span
+                  layoutId="admin-tab"
+                  transition={springSnappy}
+                  className="absolute inset-0 rounded-full bg-white/[0.08]"
+                />
+              )}
+              <span className="relative">{item.label}</span>
             </button>
           ))}
         </div>
