@@ -26,7 +26,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        'border-ink-600 bg-ink-900/80 text-mist-100 hover:border-ink-500 focus:border-gold-500/70 focus:ring-gold-500/15 data-[placeholder]:text-mist-500 flex w-fit items-center justify-between gap-2 rounded-xl border px-3.5 text-sm whitespace-nowrap transition duration-200 outline-none focus:ring-4 disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-11 data-[size=sm]:h-9 [&_svg]:pointer-events-none [&_svg]:shrink-0',
+        'text-mist-100 border border-white/[0.07] bg-white/[0.03] hover:border-white/[0.16] focus:border-gold-500/50 focus:ring-gold-500/10 data-[placeholder]:text-mist-500 flex w-fit items-center justify-between gap-2 rounded-xl border px-3.5 text-sm whitespace-nowrap transition duration-200 outline-none focus:ring-4 disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-11 data-[size=sm]:h-9 [&_svg]:pointer-events-none [&_svg]:shrink-0',
         className,
       )}
       {...props}
@@ -51,7 +51,7 @@ function SelectContent({
         data-slot="select-content"
         position={position}
         className={cn(
-          'border-ink-700 bg-ink-850 text-mist-200 shadow-panel anim-content relative z-50 max-h-(--radix-select-content-available-height) min-w-32 origin-(--radix-select-content-transform-origin) overflow-y-auto rounded-xl border p-1.5',
+          'glass glass-strong text-mist-200 shadow-panel anim-content relative z-50 max-h-(--radix-select-content-available-height) min-w-32 origin-(--radix-select-content-transform-origin) overflow-y-auto rounded-xl border p-1.5',
           position === 'popper' &&
             'data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1',
           className,
@@ -93,7 +93,7 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        'focus:bg-ink-700 focus:text-mist-100 data-[state=checked]:text-gold-300 relative flex w-full cursor-default items-center gap-2 rounded-lg py-2 pr-8 pl-2.5 text-sm outline-none transition select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+        'focus:bg-white/[0.06] focus:text-mist-100 data-[state=checked]:text-gold-300 relative flex w-full cursor-default items-center gap-2 rounded-lg py-2 pr-8 pl-2.5 text-sm outline-none transition select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
         className,
       )}
       {...props}

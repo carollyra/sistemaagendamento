@@ -21,7 +21,7 @@ export function AppointmentCard({
 
   return (
     <article
-      className={`rounded-media border-ink-700/70 bg-ink-850 hover:border-ink-500 ease-smooth flex flex-col gap-4 border p-3 transition-colors duration-300 sm:flex-row sm:items-center sm:gap-5 ${
+      className={`rounded-media bg-ink-900 ease-smooth flex flex-col gap-4 border border-white/[0.06] p-3 transition-colors duration-300 hover:border-white/[0.14] sm:flex-row sm:items-center sm:gap-5 ${
         isCancelled ? 'opacity-60' : ''
       }`}
     >
@@ -30,7 +30,7 @@ export function AppointmentCard({
           src={serviceImage(appointment.service.name, { width: 300, height: 300 })}
           alt=""
           loading="lazy"
-          className="size-full object-cover"
+          className="photo size-full object-cover"
         />
         <span className="bg-ink-950/75 font-display absolute inset-x-0 bottom-0 py-1 text-center text-sm font-bold tabular-nums text-white backdrop-blur-sm">
           {formatTime(appointment.startsAt)}

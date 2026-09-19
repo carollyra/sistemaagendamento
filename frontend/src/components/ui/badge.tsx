@@ -10,8 +10,8 @@ const badgeVariants = cva(
       variant: {
         default: 'border-gold-500/30 bg-gold-500/10 text-gold-300',
         success: 'border-emerald-500/25 bg-emerald-500/10 text-emerald-300',
-        muted: 'border-ink-600 bg-ink-800 text-mist-400',
-        outline: 'border-ink-600 text-mist-300',
+        muted: 'border-white/[0.07] bg-white/[0.03] text-mist-400',
+        outline: 'border-white/[0.07] text-mist-300',
         destructive: 'border-red-500/30 bg-red-500/10 text-red-200',
       },
     },

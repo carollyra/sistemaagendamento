@@ -1,8 +1,16 @@
 import type { Transition, Variants } from 'framer-motion';
 
-export const smooth: Transition = { duration: 0.35, ease: [0.4, 0, 0.2, 1] };
+/** House spring — everything that moves uses this physics. */
+export const spring: Transition = { type: 'spring', stiffness: 300, damping: 30, mass: 0.8 };
 
-/** Container that reveals its children one after the other. */
+/** Slightly snappier spring for small controls. */
+export const springSnappy: Transition = {
+  type: 'spring',
+  stiffness: 420,
+  damping: 34,
+  mass: 0.6,
+};
+
 export const staggerContainer: Variants = {
   hidden: {},
   visible: {
@@ -11,24 +19,27 @@ export const staggerContainer: Variants = {
 };
 
 export const staggerItem: Variants = {
-  hidden: { opacity: 0, y: 12 },
-  visible: { opacity: 1, y: 0, transition: smooth },
+  hidden: { opacity: 0, y: 14 },
+  visible: { opacity: 1, y: 0, transition: spring },
 };
 
-/** Slides a wizard step in from the side it came from. */
+/** Wizard steps slide in from the side they came from. */
 export const stepVariants: Variants = {
-  enter: (direction: number) => ({ opacity: 0, x: direction >= 0 ? 32 : -32 }),
-  center: { opacity: 1, x: 0, transition: smooth },
+  enter: (direction: number) => ({ opacity: 0, x: direction >= 0 ? 28 : -28 }),
+  center: { opacity: 1, x: 0, transition: spring },
   exit: (direction: number) => ({
     opacity: 0,
-    x: direction >= 0 ? -32 : 32,
-    transition: { duration: 0.2, ease: [0.4, 0, 1, 1] },
+    x: direction >= 0 ? -28 : 28,
+    transition: { duration: 0.18, ease: [0.4, 0, 1, 1] },
   }),
 };
 
-/** Subtle lift used on interactive cards. */
+/** Cards grow a touch instead of jumping. */
 export const cardHover = {
-  whileHover: { y: -3 },
-  whileTap: { y: -1 },
-  transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] },
+  whileHover: { scale: 1.02 },
+  whileTap: { scale: 0.995 },
+  transition: spring,
 } as const;
+
+/** Shared layout id for the pill that marks the active option in a group. */
+export const ACTIVE_PILL = 'active-pill';

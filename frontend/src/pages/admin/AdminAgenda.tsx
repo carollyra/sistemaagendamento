@@ -16,13 +16,15 @@ import {
 } from '../../components/ui/select';
 import { DateStrip } from '../../components/DateStrip';
 import { useDayAgenda } from '../../hooks/useDayAgenda';
-import { staggerContainer, staggerItem } from '../../lib/motion';
+import { useWeekOverview } from '../../hooks/useWeekOverview';
+import { spring, staggerContainer, staggerItem } from '../../lib/motion';
 import { getErrorMessage } from '../../services/api';
 import * as appointmentService from '../../services/appointment.service';
 import type { Appointment } from '../../types';
 import {
   addDays,
   buildDayOptions,
+  formatDayLabel,
   formatLongDate,
   formatPrice,
   todayISO,
@@ -38,6 +40,7 @@ const QUICK_JUMPS = [
 export function AdminAgenda() {
   const [date, setDate] = useState(() => todayISO());
   const dayOptions = useMemo(() => buildDayOptions(14), []);
+  const week = useWeekOverview(todayISO());
   const { appointments, isLoading, error, refresh } = useDayAgenda(date);
   const [busyId, setBusyId] = useState<string | null>(null);
 
@@ -68,7 +71,7 @@ export function AdminAgenda() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h2 className="font-display text-xl font-semibold">{formatLongDate(date)}</h2>
+          <h2 className="font-display text-title font-semibold">{formatLongDate(date)}</h2>
           <p className="text-mist-500 mt-1 text-sm">
             {date === todayISO() ? 'Hoje na barbearia' : 'Dia selecionado'}
           </p>
@@ -142,62 +145,119 @@ export function AdminAgenda() {
 
       {error && <Alert tone="error">{error}</Alert>}
 
-      {isLoading ? (
-        <SkeletonList rows={3} label="Carregando agenda" />
-      ) : appointments.length === 0 ? (
-        <div className="surface flex flex-col items-center gap-2 px-6 py-14 text-center">
-          <p className="font-display text-mist-100 text-base font-medium">Dia tranquilo</p>
-          <p className="text-mist-400 text-sm">Nenhum agendamento para esta data.</p>
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)] lg:items-start">
+        <div className="flex flex-col gap-4">
+          {isLoading ? (
+            <SkeletonList rows={3} label="Carregando agenda" />
+          ) : appointments.length === 0 ? (
+            <div className="surface flex flex-col items-center gap-2 px-6 py-14 text-center">
+              <p className="font-display text-mist-100 text-base font-medium">Dia tranquilo</p>
+              <p className="text-mist-400 text-sm">Nenhum agendamento para esta data.</p>
+            </div>
+          ) : (
+            <motion.ul
+              key={date}
+              className="flex flex-col gap-4"
+              variants={staggerContainer}
+              initial="hidden"
+              animate="visible"
+            >
+              <AnimatePresence initial={false}>
+                {appointments.map((appointment) => (
+                  <motion.li
+                    key={appointment.id}
+                    layout
+                    variants={staggerItem}
+                    exit={{ opacity: 0, y: -8 }}
+                    whileHover={{ scale: 1.01 }}
+                    transition={spring}
+                  >
+                    <AppointmentCard
+                      appointment={appointment}
+                      showClient
+                      actions={
+                        appointment.status === 'SCHEDULED' ? (
+                          <>
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              isLoading={busyId === appointment.id}
+                              onClick={() => updateStatus(appointment, 'COMPLETED')}
+                            >
+                              Concluir
+                            </Button>
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              isLoading={busyId === appointment.id}
+                              onClick={() => updateStatus(appointment, 'CANCELLED')}
+                            >
+                              Cancelar
+                            </Button>
+                          </>
+                        ) : null
+                      }
+                    />
+                  </motion.li>
+                ))}
+              </AnimatePresence>
+            </motion.ul>
+          )}
         </div>
-      ) : (
-        <motion.ul
-          key={date}
-          className="flex flex-col gap-4"
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-        >
-          <AnimatePresence initial={false}>
-            {appointments.map((appointment) => (
-              <motion.li
-                key={appointment.id}
-                layout
-                variants={staggerItem}
-                exit={{ opacity: 0, y: -8 }}
-                whileHover={{ y: -3 }}
-                transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-              >
-                <AppointmentCard
-                  appointment={appointment}
-                  showClient
-                  actions={
-                    appointment.status === 'SCHEDULED' ? (
-                      <>
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          isLoading={busyId === appointment.id}
-                          onClick={() => updateStatus(appointment, 'COMPLETED')}
-                        >
-                          Concluir
-                        </Button>
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          isLoading={busyId === appointment.id}
-                          onClick={() => updateStatus(appointment, 'CANCELLED')}
-                        >
-                          Cancelar
-                        </Button>
-                      </>
-                    ) : null
-                  }
-                />
-              </motion.li>
-            ))}
-          </AnimatePresence>
-        </motion.ul>
-      )}
+
+        {/* Week at a glance */}
+        <aside className="glass flex flex-col gap-4 p-5">
+          <div className="flex items-baseline justify-between">
+            <h3 className="font-display text-title font-semibold">Próximos 7 dias</h3>
+            <span className="text-mist-500 text-meta">agendados</span>
+          </div>
+
+          <ul className="flex flex-col gap-2.5">
+            {week.map((day) => {
+              const peak = Math.max(...week.map((entry) => entry.scheduled), 1);
+              const isCurrent = day.date === date;
+
+              return (
+                <li key={day.date}>
+                  <button
+                    type="button"
+                    onClick={() => setDate(day.date)}
+                    className={`ease-smooth flex w-full items-center gap-3 rounded-xl px-2.5 py-2 transition-colors duration-200 ${
+                      isCurrent ? 'bg-white/[0.06]' : 'hover:bg-white/[0.04]'
+                    }`}
+                  >
+                    <span
+                      className={`w-20 shrink-0 text-left text-meta ${
+                        isCurrent ? 'text-mist-100' : 'text-mist-400'
+                      }`}
+                    >
+                      {formatDayLabel(day.date)}
+                    </span>
+
+                    <span className="bg-ink-700 h-1.5 flex-1 overflow-hidden rounded-full">
+                      <span
+                        className="bg-gold-500 ease-smooth block h-full rounded-full transition-[width] duration-500"
+                        style={{ width: `${Math.round((day.scheduled / peak) * 100)}%` }}
+                      />
+                    </span>
+
+                    <span className="text-mist-200 w-4 shrink-0 text-right text-meta tabular-nums">
+                      {day.scheduled}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="flex items-baseline justify-between border-t border-white/[0.06] pt-4">
+            <span className="text-mist-500 text-meta">Receita prevista</span>
+            <span className="font-display text-mist-100 text-title font-semibold tabular-nums">
+              {formatPrice(week.reduce((sum, day) => sum + day.revenue, 0))}
+            </span>
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,9 @@
 /**
- * Curated Unsplash photography used across the app.
- * Direct CDN URLs — no API key, no runtime requests to the Unsplash API.
+ * Curated Unsplash photography — direct CDN URLs, no API key.
+ *
+ * The selection follows one brief: dark, high contrast, detail driven (tools,
+ * chair, hands at work) and no faces in the foreground. Every `<img>` carries
+ * the `photo` class so the whole set shares a single colour treatment.
  */
 const UNSPLASH = 'https://images.unsplash.com/photo-';
 
@@ -10,7 +13,7 @@ interface PhotoOptions {
   quality?: number;
 }
 
-function photo(id: string, { width = 800, height, quality = 70 }: PhotoOptions = {}): string {
+function photo(id: string, { width = 800, height, quality = 72 }: PhotoOptions = {}): string {
   const params = new URLSearchParams({
     auto: 'format',
     fit: 'crop',
@@ -26,42 +29,43 @@ function photo(id: string, { width = 800, height, quality = 70 }: PhotoOptions =
 }
 
 const IDS = {
-  shave: '1503951914875-452162b0f3f1',
-  shop: '1585747860715-2ba37e788b70',
-  fade: '1599351431202-1e0f0137899a',
-  tools: '1621605815971-fbc98d665033',
-  haircut: '1622286342621-4bd786c2447c',
-  barberAtWork: '1567894340315-735d7c361db0',
-  blowDry: '1605497788044-5a32c7078486',
+  /** Leather barber chair, close and dark. */
+  chair: '1512690459411-b9245aed614b',
+  /** Clippers working the nape — hands only. */
+  clippers: '1493256338651-d82f7acb2b38',
+  /** Straight razor along a beard, monochrome. */
   razor: '1517832606299-7ae9b720a186',
-  styling: '1593702295094-aea22597af65',
-  youngClient: '1622287162716-f311baa1a2b8',
-  portrait: '1614289371518-722f2615943d',
+  /** Comb and fingers on the back of the head. */
+  comb: '1622286342621-4bd786c2447c',
+  /** Scissors, clippers and pomade on a slate board. */
+  tools: '1621605815971-fbc98d665033',
+  /** Shop interior: brick, mirrors, warm bulbs. */
+  shop: '1585747860715-2ba37e788b70',
+  /** Tight fade detail. */
+  fade: '1599351431202-1e0f0137899a',
+  /** Barber at the chair, seen from behind. */
+  chairSide: '1622287162716-f311baa1a2b8',
 } as const;
 
 export const images = {
-  hero: (options?: PhotoOptions) => photo(IDS.shave, { width: 1600, height: 1000, ...options }),
-  shop: (options?: PhotoOptions) => photo(IDS.shop, { width: 1200, height: 900, ...options }),
-  auth: (options?: PhotoOptions) =>
-    photo(IDS.barberAtWork, { width: 1000, height: 1400, ...options }),
-  tools: (options?: PhotoOptions) => photo(IDS.tools, { width: 900, height: 600, ...options }),
-  portrait: (options?: PhotoOptions) =>
-    photo(IDS.portrait, { width: 600, height: 800, ...options }),
-  styling: (options?: PhotoOptions) => photo(IDS.styling, { width: 900, height: 600, ...options }),
+  hero: (options?: PhotoOptions) => photo(IDS.chair, { width: 1600, height: 1100, ...options }),
+  shop: (options?: PhotoOptions) => photo(IDS.shop, { width: 1400, height: 900, ...options }),
+  auth: (options?: PhotoOptions) => photo(IDS.clippers, { width: 1100, height: 1500, ...options }),
+  tools: (options?: PhotoOptions) => photo(IDS.tools, { width: 1000, height: 640, ...options }),
+  texture: (options?: PhotoOptions) => photo(IDS.fade, { width: 900, height: 600, ...options }),
+  band: (options?: PhotoOptions) => photo(IDS.tools, { width: 1600, height: 420, ...options }),
 };
 
-/** Photos used when a service has no picture of its own, picked by name. */
 const SERVICE_PHOTOS: { match: RegExp; id: string }[] = [
-  { match: /(corte|cut).*(barba|beard)|combo|completo|\+/i, id: IDS.blowDry },
+  { match: /(corte|cut).*(barba|beard)|combo|completo|\+/i, id: IDS.comb },
   { match: /barba|beard|shave/i, id: IDS.razor },
-  { match: /infantil|kid|crian/i, id: IDS.youngClient },
-  { match: /corte|cut|fade|degrad/i, id: IDS.haircut },
-  { match: /colora|color|luzes/i, id: IDS.styling },
+  { match: /infantil|kid|crian/i, id: IDS.chairSide },
+  { match: /corte|cut|fade|degrad/i, id: IDS.clippers },
+  { match: /colora|color|luzes|trat/i, id: IDS.tools },
 ];
 
-const FALLBACKS = [IDS.fade, IDS.barberAtWork, IDS.styling, IDS.shop, IDS.haircut];
+const FALLBACKS = [IDS.fade, IDS.chair, IDS.tools, IDS.shop];
 
-/** Stable pick so the same service always shows the same photo. */
 function hash(value: string): number {
   let total = 0;
 

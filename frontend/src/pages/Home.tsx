@@ -8,8 +8,9 @@ import { Skeleton } from '../components/Skeleton';
 import { useAuth } from '../hooks/useAuth';
 import { useNextSlots } from '../hooks/useNextSlots';
 import { usePublicServices } from '../hooks/usePublicServices';
+import { useServiceAvailability } from '../hooks/useServiceAvailability';
 import { images, serviceImage } from '../lib/images';
-import { staggerContainer, staggerItem } from '../lib/motion';
+import { spring, staggerContainer, staggerItem } from '../lib/motion';
 import { formatDayLabel, formatDuration, formatPrice, formatTime, greeting } from '../utils/format';
 
 const steps = [
@@ -39,6 +40,7 @@ const highlights = [
 export default function Home() {
   const { isAuthenticated, user } = useAuth();
   const { services, isLoading, error } = usePublicServices();
+  const availability = useServiceAvailability(services);
   const featuredService = services[0];
   const nextSlots = useNextSlots(featuredService?.id);
   const hasPreview = Boolean(featuredService && nextSlots && nextSlots.slots.length > 0);
@@ -70,33 +72,35 @@ export default function Home() {
       )}
 
       {/* Hero */}
-      <section className="rounded-panel relative overflow-hidden">
+      <section className="rounded-panel relative flex min-h-[30rem] overflow-hidden sm:min-h-[34rem]">
         <img
           src={images.hero()}
-          alt="Barbeiro finalizando a barba de um cliente"
-          className="absolute inset-0 size-full object-cover"
+          alt="Cadeira de barbeiro em couro"
+          className="photo absolute inset-0 size-full object-cover"
         />
         <div className="photo-scrim absolute inset-0" aria-hidden />
+        <div className="bg-ink-950/35 absolute inset-0" aria-hidden />
 
-        <div className="relative flex flex-col gap-7 p-7 pt-40 sm:p-12 sm:pt-56 lg:pt-72">
+        <div className="relative mt-auto flex flex-col gap-6 p-7 pt-24 sm:p-10 sm:pt-32">
           <span className="border-mist-100/20 bg-ink-950/50 text-mist-100 inline-flex w-fit items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs backdrop-blur">
             <span className="bg-gold-400 size-1.5 animate-pulse rounded-full" aria-hidden />
             Agenda aberta · Seg a sáb · 09h–19h
           </span>
 
-          <h1 className="font-display max-w-2xl text-4xl leading-[0.95] font-extrabold tracking-[-0.04em] text-balance text-white sm:text-6xl">
+          <h1 className="font-display text-display sm:text-hero max-w-3xl font-semibold text-balance text-white">
             {isAuthenticated ? (
               <>
-                Pronto para a <span className="text-gold-400">próxima cadeira</span>?
+                Pronto para a <span className="text-light text-mist-300">próxima cadeira</span>?
               </>
             ) : (
               <>
-                A barbearia que <span className="text-gold-400">respeita o seu tempo</span>
+                A barbearia que{' '}
+                <span className="text-light text-mist-300">respeita o seu tempo</span>
               </>
             )}
           </h1>
 
-          <p className="text-mist-200 max-w-lg text-sm leading-relaxed sm:text-base">
+          <p className="text-mist-300 text-body max-w-md">
             Horários em tempo real, confirmação na hora e uma agenda que nunca dobra reserva.
           </p>
 
@@ -146,7 +150,7 @@ export default function Home() {
                 src={serviceImage(featuredService.name, { width: 200, height: 200 })}
                 alt=""
                 loading="lazy"
-                className="size-12 rounded-xl object-cover"
+                className="photo size-12 rounded-xl object-cover"
               />
               <div>
                 <p className="text-mist-500 text-[11px] tracking-[0.15em] uppercase">
@@ -181,10 +185,10 @@ export default function Home() {
       <section className="flex flex-col gap-6">
         <header className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-gold-500 text-xs font-medium tracking-[0.2em] uppercase">
-              O cardápio
-            </p>
-            <h2 className="mt-2 text-2xl font-extrabold sm:text-3xl">Serviços e preços</h2>
+            <p className="text-gold-500 text-eyebrow font-medium uppercase">O cardápio</p>
+            <h2 className="text-heading mt-2 font-semibold">
+              Serviços <span className="text-light">e preços</span>
+            </h2>
           </div>
 
           <Link
@@ -217,19 +221,19 @@ export default function Home() {
               <motion.li
                 key={service.id}
                 variants={staggerItem}
-                whileHover={{ y: -4 }}
-                transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                whileHover={{ scale: 1.02 }}
+                transition={spring}
               >
                 <Link
                   to={primaryTo}
-                  className="group rounded-media border-ink-700/70 bg-ink-850 hover:border-ink-500 ease-smooth flex h-full flex-col overflow-hidden border transition-colors duration-300"
+                  className="group rounded-media bg-ink-900 ease-smooth flex h-full flex-col overflow-hidden border border-white/[0.06] transition-colors duration-300 hover:border-white/[0.16]"
                 >
                   <div className="relative h-40 overflow-hidden">
                     <img
                       src={serviceImage(service.name)}
                       alt={service.name}
                       loading="lazy"
-                      className="ease-smooth size-full object-cover transition duration-500 group-hover:scale-105"
+                      className="photo ease-smooth size-full object-cover transition duration-700 group-hover:scale-[1.04]"
                     />
                     <div className="photo-scrim absolute inset-0 opacity-80" aria-hidden />
                     <span className="bg-ink-950/70 text-mist-100 absolute top-3 left-3 rounded-full px-3 py-1 text-[11px] backdrop-blur">
@@ -245,11 +249,18 @@ export default function Home() {
                       <p className="text-mist-400 text-sm leading-relaxed">{service.description}</p>
                     )}
 
-                    <div className="border-ink-700/70 mt-auto flex items-center justify-between border-t pt-3">
-                      <span className="text-gold-400 font-display text-base font-bold tabular-nums">
-                        {formatPrice(service.price)}
-                      </span>
-                      <span className="text-mist-400 group-hover:text-gold-300 flex items-center gap-1.5 text-xs transition">
+                    <div className="mt-auto flex items-center justify-between border-t border-white/[0.06] pt-3">
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-display text-mist-100 text-title font-semibold tabular-nums">
+                          {formatPrice(service.price)}
+                        </span>
+                        {availability[service.id]?.when && (
+                          <span className="text-mist-500 text-meta">
+                            {availability[service.id].count} livres {availability[service.id].when}
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-mist-400 group-hover:text-gold-400 flex items-center gap-1.5 text-meta transition">
                         Agendar
                         <ArrowRight className="size-3.5" aria-hidden />
                       </span>
@@ -268,15 +279,15 @@ export default function Home() {
           src={images.shop()}
           alt="Salão da Fade Barbearia"
           loading="lazy"
-          className="absolute inset-0 size-full object-cover"
+          className="photo absolute inset-0 size-full object-cover"
         />
-        <div className="photo-scrim-side absolute inset-0" aria-hidden />
+        <div className="photo-scrim absolute inset-0" aria-hidden />
 
         <div className="relative grid gap-8 p-7 sm:p-10 lg:grid-cols-[1fr_auto] lg:items-end">
           <div className="max-w-md">
-            <p className="text-gold-400 text-xs font-medium tracking-[0.2em] uppercase">A casa</p>
-            <h2 className="mt-3 text-2xl font-extrabold text-white sm:text-3xl">
-              Cadeira de barbeiro, clima de bar
+            <p className="text-gold-400 text-eyebrow font-medium uppercase">A casa</p>
+            <h2 className="text-heading mt-3 font-semibold text-white">
+              Cadeira de barbeiro, <span className="text-light text-mist-300">clima de bar</span>
             </h2>
             <p className="text-mist-200 mt-3 text-sm leading-relaxed">
               Tijolo aparente, luz quente e uma equipe que conhece o seu corte de cor. Chegue dez
@@ -302,10 +313,10 @@ export default function Home() {
       {/* How it works */}
       <section className="flex flex-col gap-6">
         <header>
-          <p className="text-gold-500 text-xs font-medium tracking-[0.2em] uppercase">
-            Como funciona
-          </p>
-          <h2 className="mt-2 text-2xl font-extrabold sm:text-3xl">Três passos e pronto</h2>
+          <p className="text-gold-500 text-eyebrow font-medium uppercase">Como funciona</p>
+          <h2 className="text-heading mt-2 font-semibold">
+            Três passos <span className="text-light">e pronto</span>
+          </h2>
         </header>
 
         <motion.ol
@@ -318,8 +329,8 @@ export default function Home() {
             <motion.li
               key={step.title}
               variants={staggerItem}
-              whileHover={{ y: -4 }}
-              transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+              whileHover={{ scale: 1.02 }}
+              transition={spring}
               className="surface flex flex-col gap-3 p-5"
             >
               <div className="flex items-center justify-between">
@@ -339,8 +350,8 @@ export default function Home() {
 
       {/* CTA */}
       <section className="rounded-panel border-ink-700/70 bg-ink-850 flex flex-col items-center gap-5 border px-6 py-12 text-center sm:px-16">
-        <h2 className="font-display max-w-xl text-2xl leading-tight font-extrabold text-balance sm:text-3xl">
-          Sua cadeira está a um toque
+        <h2 className="font-display text-heading max-w-xl font-semibold text-balance">
+          Sua cadeira <span className="text-light">está a um toque</span>
         </h2>
         <p className="text-mist-400 max-w-md text-sm leading-relaxed">
           Junte-se a quem parou de esperar no telefone.

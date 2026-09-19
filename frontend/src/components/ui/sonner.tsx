@@ -17,7 +17,7 @@ function Toaster({ ...props }: ToasterProps) {
       toastOptions={{
         classNames: {
           toast:
-            '!bg-ink-850 !border-ink-700 !text-mist-100 !shadow-panel !rounded-xl !font-sans !gap-3',
+            '!bg-[rgb(11_13_17/0.9)] !backdrop-blur-2xl !border-white/[0.08] !text-mist-100 !shadow-panel !rounded-2xl !font-sans !gap-3',
           title: '!text-sm !font-medium',
           description: '!text-mist-400 !text-xs',
           actionButton: '!bg-gold-500 !text-ink-950 !rounded-lg',

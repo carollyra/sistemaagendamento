@@ -18,8 +18,8 @@ export function ServiceCard({ service, selected = false, onSelect }: ServiceCard
       aria-pressed={selected}
       className={`group ease-smooth rounded-media relative flex w-full overflow-hidden border text-left transition-colors duration-300 ${
         selected
-          ? 'border-gold-500 bg-ink-800'
-          : 'border-ink-700/70 bg-ink-850 hover:border-ink-500 hover:bg-ink-800'
+          ? 'border-gold-500/70 bg-white/[0.05]'
+          : 'bg-ink-900 border-white/[0.06] hover:border-white/[0.14]'
       }`}
     >
       <div className="relative h-28 w-28 shrink-0 overflow-hidden sm:h-32 sm:w-32">
@@ -27,7 +27,7 @@ export function ServiceCard({ service, selected = false, onSelect }: ServiceCard
           src={serviceImage(service.name, { width: 400, height: 400 })}
           alt=""
           loading="lazy"
-          className="ease-smooth size-full object-cover transition duration-500 group-hover:scale-105"
+          className="photo ease-smooth size-full object-cover transition duration-700 group-hover:scale-[1.04]"
         />
         {selected && (
           <span className="bg-gold-500 text-ink-950 absolute top-2 left-2 flex size-6 items-center justify-center rounded-full">
