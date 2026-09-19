@@ -40,13 +40,16 @@ export default function Login() {
       footer={
         <>
           Don&apos;t have an account?{' '}
-          <Link to="/register" className="font-medium text-amber-400 hover:text-amber-300">
+          <Link
+            to="/register"
+            className="text-gold-400 hover:text-gold-300 font-medium underline-offset-4 hover:underline"
+          >
             Create one
           </Link>
         </>
       }
     >
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         {error && <Alert tone="error">{error}</Alert>}
 
         <Input
@@ -69,7 +72,7 @@ export default function Login() {
           placeholder="••••••••"
         />
 
-        <Button type="submit" isLoading={isSubmitting} className="mt-2">
+        <Button type="submit" size="lg" fullWidth isLoading={isSubmitting} className="mt-2">
           Sign in
         </Button>
       </form>

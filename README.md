@@ -128,6 +128,19 @@ Protected routes expect the header `Authorization: Bearer <token>`.
   the check runs inside a serializable transaction.
 - Cancelled appointments release the slot again.
 
+## Design system
+
+The frontend ships with a small, self-contained design system in
+`frontend/src/index.css`:
+
+- **Palette** — deep blue-tinted neutrals (`ink-*`), muted text greys (`mist-*`)
+  and a single accent, a refined gold (`gold-*`).
+- **Typography** — Sora for headings (`font-display`), Inter for body text.
+- **Surfaces** — `.surface` / `.surface-hover` for layered cards, `.field` for
+  inputs, `.aurora` for the soft background glow.
+- **Motion** — `animate-fade-up`, `animate-fade-in`, `animate-scale-in` and a
+  shimmer used by the skeleton loaders.
+
 ## Frontend routes
 
 | Route           | Access | Description                                      |
@@ -149,3 +162,4 @@ Protected routes expect the header `Authorization: Bearer <token>`.
 - [x] 6. Booking flow (service → date → available time)
 - [x] 7. "My appointments" page with cancel
 - [x] 8. Admin panel: manage services and view the day's agenda
+- [x] 9. Visual redesign: design system, typography and polished UI

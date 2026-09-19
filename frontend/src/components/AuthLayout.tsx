@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
 import type { ReactNode } from 'react';
+import { Logo } from './Logo';
 
 interface AuthLayoutProps {
   title: string;
@@ -8,24 +8,66 @@ interface AuthLayoutProps {
   footer: ReactNode;
 }
 
+const highlights = [
+  'Real-time availability, no phone calls',
+  'Cancel or reschedule in two taps',
+  'Your history always at hand',
+];
+
 export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProps) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-stone-950 px-4 py-10">
-      <div className="w-full max-w-md">
-        <Link to="/" className="mb-8 flex items-center justify-center gap-2">
-          <span className="text-2xl">💈</span>
-          <span className="text-lg font-semibold tracking-tight text-stone-100">Barbershop</span>
-        </Link>
+    <div className="bg-ink-950 min-h-screen lg:grid lg:grid-cols-[1.05fr_1fr]">
+      {/* Brand panel — decorative, hidden on small screens */}
+      <aside className="aurora border-ink-800/80 relative hidden flex-col justify-between border-r p-12 lg:flex">
+        <Logo />
 
-        <div className="rounded-2xl border border-stone-800 bg-stone-900/60 p-6 shadow-xl sm:p-8">
-          <h1 className="text-xl font-semibold text-stone-100">{title}</h1>
-          <p className="mt-1 text-sm text-stone-400">{subtitle}</p>
+        <div className="max-w-md">
+          <p className="text-gold-500 text-xs font-medium tracking-[0.2em] uppercase">Since 2014</p>
+          <h2 className="font-display mt-5 text-4xl leading-[1.1] font-semibold text-balance">
+            Precision cuts, <span className="text-gradient">booked in seconds</span>
+          </h2>
+          <p className="text-mist-400 mt-5 leading-relaxed">
+            A calmer way to run the chair. Pick a service, grab a slot and let the schedule take
+            care of itself.
+          </p>
 
-          <div className="mt-6">{children}</div>
+          <ul className="mt-10 flex flex-col gap-4">
+            {highlights.map((item) => (
+              <li key={item} className="text-mist-300 flex items-center gap-3 text-sm">
+                <span className="border-gold-500/30 bg-gold-500/10 text-gold-400 flex size-6 items-center justify-center rounded-full border">
+                  <svg viewBox="0 0 24 24" fill="none" className="size-3" aria-hidden>
+                    <path
+                      d="m5 13 4 4L19 7"
+                      stroke="currentColor"
+                      strokeWidth="2.4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <p className="mt-6 text-center text-sm text-stone-400">{footer}</p>
-      </div>
+        <p className="text-mist-500 text-xs">Monday to Saturday · 09:00 – 19:00</p>
+      </aside>
+
+      <main className="flex min-h-screen items-center justify-center px-5 py-12 sm:px-8">
+        <div className="animate-fade-up w-full max-w-md">
+          <div className="mb-10 flex justify-center lg:hidden">
+            <Logo />
+          </div>
+
+          <h1 className="font-display text-3xl font-semibold tracking-tight">{title}</h1>
+          <p className="text-mist-400 mt-2 text-sm leading-relaxed">{subtitle}</p>
+
+          <div className="mt-9">{children}</div>
+
+          <p className="text-mist-400 mt-8 text-center text-sm">{footer}</p>
+        </div>
+      </main>
     </div>
   );
 }

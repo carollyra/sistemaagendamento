@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Alert } from '../../components/Alert';
 import { AppointmentCard } from '../../components/AppointmentCard';
 import { Button } from '../../components/Button';
-import { Spinner } from '../../components/Spinner';
+import { SkeletonList } from '../../components/Skeleton';
 import { useDayAgenda } from '../../hooks/useDayAgenda';
 import { getErrorMessage } from '../../services/api';
 import * as appointmentService from '../../services/appointment.service';
@@ -48,53 +48,73 @@ export function AdminAgenda() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-stone-100">Agenda</h2>
-          <p className="text-sm text-stone-400">{formatLongDate(date)}</p>
+          <h2 className="font-display text-xl font-semibold">{formatLongDate(date)}</h2>
+          <p className="text-mist-500 mt-1 text-sm">
+            {date === todayISO() ? 'Today at the shop' : 'Scheduled day'}
+          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Button variant="secondary" onClick={() => setDate((current) => shiftDate(current, -1))}>
-            ‹ Previous
+          <Button
+            variant="secondary"
+            size="sm"
+            aria-label="Previous day"
+            onClick={() => setDate((current) => shiftDate(current, -1))}
+          >
+            ‹
           </Button>
           <input
             type="date"
             value={date}
             onChange={(event) => setDate(event.target.value || todayISO())}
-            className="rounded-lg border border-stone-700 bg-stone-900 px-3 py-2 text-sm text-stone-100 focus:border-amber-500 focus:outline-none"
+            className="field w-auto py-2 [color-scheme:dark]"
+            aria-label="Agenda date"
           />
-          <Button variant="secondary" onClick={() => setDate((current) => shiftDate(current, 1))}>
-            Next ›
+          <Button
+            variant="secondary"
+            size="sm"
+            aria-label="Next day"
+            onClick={() => setDate((current) => shiftDate(current, 1))}
+          >
+            ›
           </Button>
-          <Button variant="ghost" onClick={() => setDate(todayISO())}>
+          <Button variant="ghost" size="sm" onClick={() => setDate(todayISO())}>
             Today
           </Button>
         </div>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-3">
-        <div className="rounded-xl border border-stone-800 bg-stone-900/60 p-4">
-          <p className="text-xs tracking-wide text-stone-500 uppercase">Scheduled</p>
-          <p className="mt-1 text-2xl font-semibold text-stone-100">{scheduled.length}</p>
-        </div>
-        <div className="rounded-xl border border-stone-800 bg-stone-900/60 p-4">
-          <p className="text-xs tracking-wide text-stone-500 uppercase">Total bookings</p>
-          <p className="mt-1 text-2xl font-semibold text-stone-100">{appointments.length}</p>
-        </div>
-        <div className="rounded-xl border border-stone-800 bg-stone-900/60 p-4">
-          <p className="text-xs tracking-wide text-stone-500 uppercase">Expected revenue</p>
-          <p className="mt-1 text-2xl font-semibold text-amber-400">{formatPrice(revenue)}</p>
-        </div>
-      </div>
+      <dl className="grid gap-4 sm:grid-cols-3">
+        {[
+          { label: 'Scheduled', value: String(scheduled.length), accent: false },
+          { label: 'Total bookings', value: String(appointments.length), accent: false },
+          { label: 'Expected revenue', value: formatPrice(revenue), accent: true },
+        ].map((stat) => (
+          <div key={stat.label} className="surface p-5">
+            <dt className="text-mist-500 text-[11px] tracking-[0.15em] uppercase">{stat.label}</dt>
+            <dd
+              className={`font-display mt-2 text-2xl font-semibold tabular-nums ${
+                stat.accent ? 'text-gold-400' : 'text-mist-100'
+              }`}
+            >
+              {stat.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
 
       {error && <Alert tone="error">{error}</Alert>}
 
       {isLoading ? (
-        <Spinner label="Loading agenda…" />
+        <SkeletonList rows={3} label="Loading agenda" />
       ) : appointments.length === 0 ? (
-        <Alert>No appointments for this day.</Alert>
+        <div className="surface flex flex-col items-center gap-2 px-6 py-14 text-center">
+          <p className="font-display text-mist-100 text-base font-medium">A quiet day</p>
+          <p className="text-mist-400 text-sm">No appointments booked for this date.</p>
+        </div>
       ) : (
         <ul className="flex flex-col gap-3">
           {appointments.map((appointment) => (
@@ -107,6 +127,7 @@ export function AdminAgenda() {
                     <>
                       <Button
                         variant="secondary"
+                        size="sm"
                         isLoading={busyId === appointment.id}
                         onClick={() => updateStatus(appointment, 'COMPLETED')}
                       >
@@ -114,6 +135,7 @@ export function AdminAgenda() {
                       </Button>
                       <Button
                         variant="danger"
+                        size="sm"
                         isLoading={busyId === appointment.id}
                         onClick={() => updateStatus(appointment, 'CANCELLED')}
                       >

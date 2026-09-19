@@ -88,13 +88,16 @@ export default function Register() {
       footer={
         <>
           Already have an account?{' '}
-          <Link to="/login" className="font-medium text-amber-400 hover:text-amber-300">
+          <Link
+            to="/login"
+            className="text-gold-400 hover:text-gold-300 font-medium underline-offset-4 hover:underline"
+          >
             Sign in
           </Link>
         </>
       }
     >
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         {error && <Alert tone="error">{error}</Alert>}
 
         <Input
@@ -148,7 +151,7 @@ export default function Register() {
           placeholder="Repeat your password"
         />
 
-        <Button type="submit" isLoading={isSubmitting} className="mt-2">
+        <Button type="submit" size="lg" fullWidth isLoading={isSubmitting} className="mt-2">
           Create account
         </Button>
       </form>

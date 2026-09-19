@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Alert } from '../../components/Alert';
 import { Button } from '../../components/Button';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
-import { Spinner } from '../../components/Spinner';
+import { SkeletonList } from '../../components/Skeleton';
 import { ServiceForm, type ServiceFormValues } from '../../components/admin/ServiceForm';
 import { useAdminServices } from '../../hooks/useAdminServices';
 import { getErrorMessage } from '../../services/api';
@@ -101,9 +101,15 @@ export function AdminServices() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold text-stone-100">Services</h2>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 className="font-display text-xl font-semibold">Service catalogue</h2>
+          <p className="text-mist-500 mt-1 text-sm">
+            {services.length} {services.length === 1 ? 'service' : 'services'} · inactive ones stay
+            hidden from clients
+          </p>
+        </div>
         {!isFormOpen && <Button onClick={openCreateForm}>New service</Button>}
       </div>
 
@@ -121,41 +127,51 @@ export function AdminServices() {
       )}
 
       {isLoading ? (
-        <Spinner label="Loading services…" />
+        <SkeletonList rows={4} label="Loading services" />
       ) : services.length === 0 ? (
-        <Alert>No services yet. Create the first one.</Alert>
+        <div className="surface flex flex-col items-center gap-4 px-6 py-14 text-center">
+          <p className="font-display text-mist-100 text-base font-medium">No services yet</p>
+          <p className="text-mist-400 text-sm">Create the first one to open the agenda.</p>
+          <Button onClick={openCreateForm}>New service</Button>
+        </div>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="flex flex-col gap-4">
           {services.map((service) => (
             <li
               key={service.id}
-              className="flex flex-col gap-3 rounded-xl border border-stone-800 bg-stone-900/60 p-4 sm:flex-row sm:items-center sm:justify-between"
+              className={`surface surface-hover flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between ${
+                service.active ? '' : 'opacity-65'
+              }`}
             >
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-medium text-stone-100">{service.name}</span>
-                  {!service.active && (
-                    <span className="rounded-full border border-stone-600 bg-stone-800 px-2 py-0.5 text-xs text-stone-400">
-                      Inactive
-                    </span>
+              <div className="flex items-start gap-4">
+                <span className="border-ink-700 bg-ink-900/80 text-gold-400 font-display flex h-14 min-w-24 shrink-0 items-center justify-center rounded-xl border px-3 text-sm font-semibold tabular-nums">
+                  {formatPrice(service.price)}
+                </span>
+
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <h3 className="font-display text-base font-medium">{service.name}</h3>
+                    {!service.active && (
+                      <span className="border-ink-600 bg-ink-800 text-mist-400 rounded-full border px-2.5 py-0.5 text-[11px]">
+                        Inactive
+                      </span>
+                    )}
+                  </div>
+                  {service.description && (
+                    <p className="text-mist-400 text-sm leading-relaxed">{service.description}</p>
                   )}
+                  <p className="text-mist-500 text-xs">{formatDuration(service.durationMinutes)}</p>
                 </div>
-                {service.description && (
-                  <p className="text-sm text-stone-400">{service.description}</p>
-                )}
-                <p className="text-xs text-stone-500">
-                  {formatDuration(service.durationMinutes)} · {formatPrice(service.price)}
-                </p>
               </div>
 
               <div className="flex flex-wrap gap-2">
-                <Button variant="secondary" onClick={() => openEditForm(service)}>
+                <Button variant="secondary" size="sm" onClick={() => openEditForm(service)}>
                   Edit
                 </Button>
-                <Button variant="ghost" onClick={() => toggleActive(service)}>
+                <Button variant="ghost" size="sm" onClick={() => toggleActive(service)}>
                   {service.active ? 'Deactivate' : 'Activate'}
                 </Button>
-                <Button variant="danger" onClick={() => setToDelete(service)}>
+                <Button variant="danger" size="sm" onClick={() => setToDelete(service)}>
                   Delete
                 </Button>
               </div>

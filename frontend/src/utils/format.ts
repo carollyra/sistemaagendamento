@@ -88,3 +88,36 @@ export function formatLongDate(isoDate: string): string {
     year: 'numeric',
   }).format(new Date(year, month - 1, day));
 }
+
+/** Adds days to a YYYY-MM-DD string, returning the same format. */
+export function addDays(date: string, days: number): string {
+  const [year, month, day] = date.split('-').map(Number);
+  const shifted = new Date(year, month - 1, day + days);
+
+  return [
+    shifted.getFullYear(),
+    String(shifted.getMonth() + 1).padStart(2, '0'),
+    String(shifted.getDate()).padStart(2, '0'),
+  ].join('-');
+}
+
+/** Short, human label for a YYYY-MM-DD date: "Today", "Tomorrow" or "Fri 20 Sep". */
+export function formatDayLabel(date: string): string {
+  const today = todayISO();
+
+  if (date === today) {
+    return 'Today';
+  }
+
+  if (date === addDays(today, 1)) {
+    return 'Tomorrow';
+  }
+
+  const [year, month, day] = date.split('-').map(Number);
+
+  return new Intl.DateTimeFormat('en-GB', {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+  }).format(new Date(year, month - 1, day));
+}

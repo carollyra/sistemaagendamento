@@ -44,11 +44,8 @@ export function ServiceForm({ service, isSubmitting, onSubmit, onCancel }: Servi
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-4 rounded-xl border border-stone-800 bg-stone-900/60 p-4"
-    >
-      <h3 className="font-medium text-stone-100">
+    <form onSubmit={handleSubmit} className="surface animate-fade-up flex flex-col gap-5 p-6">
+      <h3 className="font-display text-base font-medium">
         {service ? `Edit “${service.name}”` : 'New service'}
       </h3>
 
@@ -69,7 +66,7 @@ export function ServiceForm({ service, isSubmitting, onSubmit, onCancel }: Servi
         placeholder="Classic scissor and clipper haircut"
       />
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-2">
         <Input
           label="Duration (minutes)"
           type="number"
@@ -95,7 +92,7 @@ export function ServiceForm({ service, isSubmitting, onSubmit, onCancel }: Servi
         />
       </div>
 
-      <div className="flex gap-3">
+      <div className="border-ink-700/70 flex gap-3 border-t pt-5">
         <Button type="submit" isLoading={isSubmitting}>
           {service ? 'Save changes' : 'Create service'}
         </Button>
