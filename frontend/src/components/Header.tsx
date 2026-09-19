@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { greeting } from '../utils/format';
+import { Avatar } from './Avatar';
 import { Button } from './Button';
 import { Logo } from './Logo';
 
@@ -45,12 +47,13 @@ export function Header() {
         <div className="hidden items-center gap-3 md:flex">
           {isAuthenticated ? (
             <>
-              <div className="border-ink-700 bg-ink-800/60 flex items-center gap-2.5 rounded-full border py-1 pr-3.5 pl-1.5">
-                <span className="bg-gold-500/15 text-gold-300 flex size-7 items-center justify-center rounded-full text-xs font-semibold">
-                  {user?.name.charAt(0).toUpperCase()}
-                </span>
-                <span className="text-mist-300 max-w-32 truncate text-xs">
-                  {user?.name.split(' ')[0]}
+              <div className="border-ink-700 bg-ink-850 flex items-center gap-2.5 rounded-full border py-1 pr-4 pl-1">
+                <Avatar name={user?.name ?? ''} size="sm" />
+                <span className="flex flex-col leading-tight">
+                  <span className="text-mist-500 text-[10px]">{greeting()},</span>
+                  <span className="text-mist-100 max-w-32 truncate text-xs font-medium">
+                    {user?.name.split(' ')[0]}
+                  </span>
                 </span>
               </div>
               <Button variant="ghost" size="sm" onClick={signOut}>

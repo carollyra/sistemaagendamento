@@ -8,6 +8,7 @@ const currencyFormatter = new Intl.NumberFormat('pt-BR', {
 });
 
 const weekDayFormatter = new Intl.DateTimeFormat('pt-BR', { weekday: 'short' });
+const monthFormatter = new Intl.DateTimeFormat('pt-BR', { month: 'short' });
 
 /** "Sex 18/09" — compact enough for the day picker grid. */
 function formatShortDay(date: Date): string {
@@ -54,9 +55,24 @@ export function formatTime(isoDate: string): string {
   return timeFormatter.format(new Date(isoDate));
 }
 
+export interface DayOption {
+  /** YYYY-MM-DD */
+  value: string;
+  /** "Hoje", "Sex 19/09" — used in summaries */
+  label: string;
+  /** "Sex" — used by the date picker */
+  weekday: string;
+  /** "19" */
+  day: string;
+  /** "set" */
+  month: string;
+  isToday: boolean;
+  isWeekend: boolean;
+}
+
 /** Builds the next `days` calendar days starting today, in YYYY-MM-DD. */
-export function buildDayOptions(days: number): { value: string; label: string }[] {
-  const options: { value: string; label: string }[] = [];
+export function buildDayOptions(days: number): DayOption[] {
+  const options: DayOption[] = [];
   const today = new Date();
 
   for (let offset = 0; offset < days; offset += 1) {
@@ -70,10 +86,37 @@ export function buildDayOptions(days: number): { value: string; label: string }[
     options.push({
       value,
       label: offset === 0 ? 'Hoje' : formatShortDay(date),
+      weekday: capitalize(weekDayFormatter.format(date).replace(/\.$/, '')),
+      day: String(date.getDate()).padStart(2, '0'),
+      month: monthFormatter.format(date).replace(/\.$/, ''),
+      isToday: offset === 0,
+      isWeekend: date.getDay() === 0 || date.getDay() === 6,
     });
   }
 
   return options;
+}
+
+/** "Bom dia" / "Boa tarde" / "Boa noite" for the current hour. */
+export function greeting(date = new Date()): string {
+  const hour = date.getHours();
+
+  if (hour < 12) {
+    return 'Bom dia';
+  }
+
+  return hour < 18 ? 'Boa tarde' : 'Boa noite';
+}
+
+/** "Setembro de 2026" — header of the date picker. */
+export function formatMonthTitle(isoDate: string): string {
+  const [year, month, day] = isoDate.split('-').map(Number);
+
+  return capitalize(
+    new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(
+      new Date(year, month - 1, day),
+    ),
+  );
 }
 
 /** Current day in the browser timezone, formatted as YYYY-MM-DD. */

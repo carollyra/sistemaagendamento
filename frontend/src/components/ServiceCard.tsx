@@ -1,5 +1,6 @@
-import { Clock3 } from 'lucide-react';
+import { Check, Clock3 } from 'lucide-react';
 import type { Service } from '../types';
+import { serviceImage } from '../lib/images';
 import { formatDuration, formatPrice } from '../utils/format';
 
 interface ServiceCardProps {
@@ -8,36 +9,55 @@ interface ServiceCardProps {
   onSelect: (service: Service) => void;
 }
 
+/** Photo card used in the booking flow — picture, name, duration and price. */
 export function ServiceCard({ service, selected = false, onSelect }: ServiceCardProps) {
   return (
     <button
       type="button"
       onClick={() => onSelect(service)}
       aria-pressed={selected}
-      className={`group ease-smooth relative flex w-full flex-col gap-2 rounded-card border p-5 text-left transition duration-300 ${
+      className={`group ease-smooth rounded-media relative flex w-full overflow-hidden border text-left transition-colors duration-300 ${
         selected
-          ? 'border-gold-500/60 bg-gold-500/8 shadow-gold'
-          : 'border-ink-700/70 bg-ink-850/70 shadow-soft hover:border-ink-500 hover:bg-ink-800/80'
+          ? 'border-gold-500 bg-ink-800'
+          : 'border-ink-700/70 bg-ink-850 hover:border-ink-500 hover:bg-ink-800'
       }`}
     >
-      <div className="flex items-start justify-between gap-4">
-        <h3 className="font-display text-base font-medium">{service.name}</h3>
-        <span
-          className={`shrink-0 text-sm font-semibold tabular-nums transition ${
-            selected ? 'text-gold-300' : 'text-gold-400/90'
-          }`}
-        >
-          {formatPrice(service.price)}
-        </span>
+      <div className="relative h-28 w-28 shrink-0 overflow-hidden sm:h-32 sm:w-32">
+        <img
+          src={serviceImage(service.name, { width: 400, height: 400 })}
+          alt=""
+          loading="lazy"
+          className="ease-smooth size-full object-cover transition duration-500 group-hover:scale-105"
+        />
+        {selected && (
+          <span className="bg-gold-500 text-ink-950 absolute top-2 left-2 flex size-6 items-center justify-center rounded-full">
+            <Check className="size-3.5" aria-hidden />
+          </span>
+        )}
       </div>
 
-      {service.description && (
-        <p className="text-mist-400 text-sm leading-relaxed">{service.description}</p>
-      )}
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 p-4">
+        <h3 className="font-display truncate text-base font-bold tracking-tight">{service.name}</h3>
 
-      <div className="text-mist-500 mt-1 flex items-center gap-2 text-xs">
-        <Clock3 className="size-3.5" aria-hidden />
-        {formatDuration(service.durationMinutes)}
+        {service.description && (
+          <p className="text-mist-400 line-clamp-2 text-xs leading-relaxed">
+            {service.description}
+          </p>
+        )}
+
+        <div className="mt-1 flex items-center gap-3">
+          <span className="text-mist-500 flex items-center gap-1.5 text-xs">
+            <Clock3 className="size-3.5" aria-hidden />
+            {formatDuration(service.durationMinutes)}
+          </span>
+          <span
+            className={`font-display text-sm font-bold tabular-nums ${
+              selected ? 'text-gold-300' : 'text-gold-400'
+            }`}
+          >
+            {formatPrice(service.price)}
+          </span>
+        </div>
       </div>
     </button>
   );
