@@ -22,10 +22,10 @@ import type { Appointment } from '../../types';
 import { addDays, formatLongDate, formatPrice, todayISO } from '../../utils/format';
 
 const QUICK_JUMPS = [
-  { value: '0', label: 'Today' },
-  { value: '1', label: 'Tomorrow' },
-  { value: '7', label: 'In a week' },
-  { value: '30', label: 'In a month' },
+  { value: '0', label: 'Hoje' },
+  { value: '1', label: 'Amanhã' },
+  { value: '7', label: 'Em uma semana' },
+  { value: '30', label: 'Em um mês' },
 ];
 
 export function AdminAgenda() {
@@ -42,15 +42,15 @@ export function AdminAgenda() {
     try {
       if (status === 'CANCELLED') {
         await appointmentService.cancelAppointment(appointment.id);
-        toast.success('Appointment cancelled', { description: appointment.user.name });
+        toast.success('Agendamento cancelado', { description: appointment.user.name });
       } else {
         await appointmentService.updateAppointmentStatus(appointment.id, status);
-        toast.success('Appointment completed', { description: appointment.user.name });
+        toast.success('Atendimento concluído', { description: appointment.user.name });
       }
 
       refresh();
     } catch (updateError) {
-      toast.error(getErrorMessage(updateError, 'Could not update the appointment'));
+      toast.error(getErrorMessage(updateError, 'Não foi possível atualizar o agendamento'));
     } finally {
       setBusyId(null);
     }
@@ -62,7 +62,7 @@ export function AdminAgenda() {
         <div>
           <h2 className="font-display text-xl font-semibold">{formatLongDate(date)}</h2>
           <p className="text-mist-500 mt-1 text-sm">
-            {date === todayISO() ? 'Today at the shop' : 'Scheduled day'}
+            {date === todayISO() ? 'Hoje na barbearia' : 'Dia selecionado'}
           </p>
         </div>
 
@@ -70,7 +70,7 @@ export function AdminAgenda() {
           <Button
             variant="secondary"
             size="sm"
-            aria-label="Previous day"
+            aria-label="Dia anterior"
             onClick={() => setDate((current) => addDays(current, -1))}
           >
             <ChevronLeft className="size-4" aria-hidden />
@@ -81,22 +81,22 @@ export function AdminAgenda() {
             value={date}
             onChange={(event) => setDate(event.target.value || todayISO())}
             className="w-auto py-2 [color-scheme:dark]"
-            aria-label="Agenda date"
+            aria-label="Data da agenda"
           />
 
           <Button
             variant="secondary"
             size="sm"
-            aria-label="Next day"
+            aria-label="Próximo dia"
             onClick={() => setDate((current) => addDays(current, 1))}
           >
             <ChevronRight className="size-4" aria-hidden />
           </Button>
 
           <Select value="" onValueChange={(value) => setDate(addDays(todayISO(), Number(value)))}>
-            <SelectTrigger size="sm" aria-label="Jump to a date">
+            <SelectTrigger size="sm" aria-label="Ir para uma data">
               <CalendarDays className="text-mist-500 size-4" aria-hidden />
-              <SelectValue placeholder="Jump to" />
+              <SelectValue placeholder="Ir para" />
             </SelectTrigger>
             <SelectContent>
               {QUICK_JUMPS.map((jump) => (
@@ -111,9 +111,9 @@ export function AdminAgenda() {
 
       <dl className="grid gap-4 sm:grid-cols-3">
         {[
-          { label: 'Scheduled', value: String(scheduled.length), accent: false },
-          { label: 'Total bookings', value: String(appointments.length), accent: false },
-          { label: 'Expected revenue', value: formatPrice(revenue), accent: true },
+          { label: 'Agendados', value: String(scheduled.length), accent: false },
+          { label: 'Total do dia', value: String(appointments.length), accent: false },
+          { label: 'Receita prevista', value: formatPrice(revenue), accent: true },
         ].map((stat) => (
           <div key={stat.label} className="surface p-5">
             <dt className="text-mist-500 text-[11px] tracking-[0.15em] uppercase">{stat.label}</dt>
@@ -131,11 +131,11 @@ export function AdminAgenda() {
       {error && <Alert tone="error">{error}</Alert>}
 
       {isLoading ? (
-        <SkeletonList rows={3} label="Loading agenda" />
+        <SkeletonList rows={3} label="Carregando agenda" />
       ) : appointments.length === 0 ? (
         <div className="surface flex flex-col items-center gap-2 px-6 py-14 text-center">
-          <p className="font-display text-mist-100 text-base font-medium">A quiet day</p>
-          <p className="text-mist-400 text-sm">No appointments booked for this date.</p>
+          <p className="font-display text-mist-100 text-base font-medium">Dia tranquilo</p>
+          <p className="text-mist-400 text-sm">Nenhum agendamento para esta data.</p>
         </div>
       ) : (
         <motion.ul
@@ -167,7 +167,7 @@ export function AdminAgenda() {
                           isLoading={busyId === appointment.id}
                           onClick={() => updateStatus(appointment, 'COMPLETED')}
                         >
-                          Complete
+                          Concluir
                         </Button>
                         <Button
                           variant="danger"
@@ -175,7 +175,7 @@ export function AdminAgenda() {
                           isLoading={busyId === appointment.id}
                           onClick={() => updateStatus(appointment, 'CANCELLED')}
                         >
-                          Cancel
+                          Cancelar
                         </Button>
                       </>
                     ) : null

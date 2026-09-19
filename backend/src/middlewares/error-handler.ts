@@ -11,7 +11,7 @@ export class AppError extends Error {
 }
 
 export function notFoundHandler(_req: Request, res: Response) {
-  res.status(404).json({ message: 'Route not found' });
+  res.status(404).json({ message: 'Rota não encontrada' });
 }
 
 export function errorHandler(error: Error, _req: Request, res: Response, _next: NextFunction) {
@@ -21,5 +21,5 @@ export function errorHandler(error: Error, _req: Request, res: Response, _next: 
   }
 
   console.error(error);
-  res.status(500).json({ message: 'Internal server error' });
+  res.status(500).json({ message: 'Erro interno do servidor' });
 }

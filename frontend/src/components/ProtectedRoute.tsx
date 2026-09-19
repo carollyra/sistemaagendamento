@@ -8,7 +8,7 @@ export function ProtectedRoute({ adminOnly = false }: { adminOnly?: boolean }) {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-6" role="status" aria-busy="true" aria-label="Loading">
+      <div className="flex flex-col gap-6" role="status" aria-busy="true" aria-label="Carregando">
         <Skeleton className="h-8 w-56" />
         <Skeleton className="h-4 w-80" />
         <div className="grid gap-4 sm:grid-cols-2">

@@ -46,25 +46,25 @@ export function ServiceForm({ service, isSubmitting, onSubmit, onCancel }: Servi
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <Input
-        label="Name"
+        label="Nome"
         required
         value={form.name}
         onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
-        placeholder="Haircut"
+        placeholder="Corte"
       />
 
       <Input
-        label="Description"
+        label="Descrição"
         value={form.description}
         onChange={(event) =>
           setForm((current) => ({ ...current, description: event.target.value }))
         }
-        placeholder="Classic scissor and clipper haircut"
+        placeholder="Corte clássico na tesoura e máquina"
       />
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Input
-          label="Duration (minutes)"
+          label="Duração (minutos)"
           type="number"
           min={5}
           max={480}
@@ -77,25 +77,25 @@ export function ServiceForm({ service, isSubmitting, onSubmit, onCancel }: Servi
         />
 
         <Input
-          label="Price"
+          label="Preço"
           type="number"
           min={0}
           step="0.01"
           required
           value={form.price}
           onChange={(event) => setForm((current) => ({ ...current, price: event.target.value }))}
-          placeholder="45.00"
+          placeholder="45,00"
         />
       </div>
 
       <div className="border-ink-700/70 flex flex-col-reverse gap-2.5 border-t pt-5 sm:flex-row sm:justify-end">
         {onCancel && (
           <Button type="button" variant="secondary" onClick={onCancel}>
-            Cancel
+            Cancelar
           </Button>
         )}
         <Button type="submit" isLoading={isSubmitting}>
-          {service ? 'Save changes' : 'Create service'}
+          {service ? 'Salvar alterações' : 'Criar serviço'}
         </Button>
       </div>
     </form>

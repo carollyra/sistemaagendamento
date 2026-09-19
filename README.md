@@ -1,6 +1,8 @@
-# Barbershop Scheduling System
+# Fade Barbearia — Scheduling System
 
 Full stack appointment scheduling system for a barbershop.
+The interface and the API messages are in Brazilian Portuguese; the codebase
+(identifiers, routes, database fields) stays in English.
 
 ## Stack
 
@@ -79,7 +81,7 @@ Backend also has `npm start` to run the compiled output from `dist/`.
 | `npm run db:generate`  | Generate the Prisma Client                    |
 | `npm run db:migrate`   | Create and apply a migration (development)    |
 | `npm run db:deploy`    | Apply pending migrations (production)         |
-| `npm run db:seed`      | Seed an admin user and the default services   |
+| `npm run db:seed`      | Seed an admin user and the default services (Corte, Barba, Corte + Barba, Corte infantil) |
 | `npm run db:studio`    | Open Prisma Studio                            |
 
 ## Data model
@@ -178,3 +180,4 @@ The frontend ships with a small, self-contained design system in
 - [x] 8. Admin panel: manage services and view the day's agenda
 - [x] 9. Visual redesign: design system, typography and polished UI
 - [x] 10. shadcn/ui primitives, toasts and motion
+- [x] 11. Brazilian Portuguese interface and "Fade Barbearia" branding

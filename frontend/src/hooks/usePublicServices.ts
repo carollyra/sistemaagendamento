@@ -21,7 +21,7 @@ export function usePublicServices() {
       })
       .catch((loadError) => {
         if (active) {
-          setError(getErrorMessage(loadError, 'Could not load services'));
+          setError(getErrorMessage(loadError, 'Não foi possível carregar os serviços'));
         }
       })
       .finally(() => {

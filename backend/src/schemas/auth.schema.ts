@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
 export const registerSchema = z.object({
-  name: z.string().trim().min(3, 'Name must have at least 3 characters').max(120),
-  email: z.email('Invalid email').toLowerCase(),
-  password: z.string().min(6, 'Password must have at least 6 characters').max(72),
+  name: z.string().trim().min(3, 'O nome deve ter pelo menos 3 caracteres').max(120),
+  email: z.email('E-mail inválido').toLowerCase(),
+  password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres').max(72),
   phone: z
     .string()
     .trim()
@@ -14,8 +14,8 @@ export const registerSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  email: z.email('Invalid email').toLowerCase(),
-  password: z.string().min(1, 'Password is required'),
+  email: z.email('E-mail inválido').toLowerCase(),
+  password: z.string().min(1, 'Informe a senha'),
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

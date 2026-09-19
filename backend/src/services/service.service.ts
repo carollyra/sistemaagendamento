@@ -36,7 +36,7 @@ export async function getServiceById(id: string) {
   const service = await prisma.service.findUnique({ where: { id } });
 
   if (!service) {
-    throw new AppError(404, 'Service not found');
+    throw new AppError(404, 'Serviço não encontrado');
   }
 
   return service;
@@ -50,7 +50,7 @@ export async function createService(input: CreateServiceInput) {
   const existing = await prisma.service.findUnique({ where: { name: input.name } });
 
   if (existing) {
-    throw new AppError(409, 'A service with this name already exists');
+    throw new AppError(409, 'Já existe um serviço com esse nome');
   }
 
   const service = await prisma.service.create({ data: input });
@@ -67,7 +67,7 @@ export async function updateService(id: string, input: UpdateServiceInput) {
     });
 
     if (duplicated) {
-      throw new AppError(409, 'A service with this name already exists');
+      throw new AppError(409, 'Já existe um serviço com esse nome');
     }
   }
 

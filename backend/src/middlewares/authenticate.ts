@@ -7,7 +7,7 @@ export function authenticate(req: Request, _res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith('Bearer ')) {
-    throw new AppError(401, 'Authentication token is missing');
+    throw new AppError(401, 'Token de autenticação ausente');
   }
 
   const token = authHeader.slice('Bearer '.length).trim();
@@ -16,13 +16,13 @@ export function authenticate(req: Request, _res: Response, next: NextFunction) {
     req.user = verifyToken(token);
     next();
   } catch {
-    throw new AppError(401, 'Invalid or expired token');
+    throw new AppError(401, 'Token inválido ou expirado');
   }
 }
 
 export function requireAdmin(req: Request, _res: Response, next: NextFunction) {
   if (req.user?.role !== Role.ADMIN) {
-    throw new AppError(403, 'Admin access required');
+    throw new AppError(403, 'Acesso restrito a administradores');
   }
 
   next();

@@ -40,15 +40,15 @@ export default function Register() {
     const errors: Partial<Record<keyof FormState, string>> = {};
 
     if (form.name.trim().length < 3) {
-      errors.name = 'Name must have at least 3 characters';
+      errors.name = 'O nome deve ter pelo menos 3 caracteres';
     }
 
     if (form.password.length < 6) {
-      errors.password = 'Password must have at least 6 characters';
+      errors.password = 'A senha deve ter pelo menos 6 caracteres';
     }
 
     if (form.password !== form.confirmPassword) {
-      errors.confirmPassword = 'Passwords do not match';
+      errors.confirmPassword = 'As senhas não conferem';
     }
 
     setFieldErrors(errors);
@@ -71,10 +71,10 @@ export default function Register() {
         password: form.password,
         phone: form.phone.trim() || undefined,
       });
-      toast.success(`Account created — welcome, ${user.name.split(' ')[0]}!`);
+      toast.success(`Conta criada — boas-vindas, ${user.name.split(' ')[0]}!`);
       navigate('/', { replace: true });
     } catch (submitError) {
-      toast.error(getErrorMessage(submitError, 'Could not create the account'));
+      toast.error(getErrorMessage(submitError, 'Não foi possível criar a conta'));
     } finally {
       setIsSubmitting(false);
     }
@@ -82,23 +82,23 @@ export default function Register() {
 
   return (
     <AuthLayout
-      title="Create your account"
-      subtitle="It takes less than a minute."
+      title="Crie sua conta"
+      subtitle="Leva menos de um minuto."
       footer={
         <>
-          Already have an account?{' '}
+          Já tem uma conta?{' '}
           <Link
             to="/login"
             className="text-gold-400 hover:text-gold-300 font-medium underline-offset-4 hover:underline"
           >
-            Sign in
+            Entrar
           </Link>
         </>
       }
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <Input
-          label="Full name"
+          label="Nome completo"
           autoComplete="name"
           required
           value={form.name}
@@ -108,48 +108,48 @@ export default function Register() {
         />
 
         <Input
-          label="Email"
+          label="E-mail"
           type="email"
           autoComplete="email"
           required
           value={form.email}
           onChange={(event) => updateField('email', event.target.value)}
-          placeholder="you@mail.com"
+          placeholder="voce@email.com"
         />
 
         <Input
-          label="Phone (optional)"
+          label="Telefone (opcional)"
           type="tel"
           autoComplete="tel"
           value={form.phone}
           onChange={(event) => updateField('phone', event.target.value)}
-          placeholder="11 99999-8888"
+          placeholder="(11) 99999-8888"
         />
 
         <Input
-          label="Password"
+          label="Senha"
           type="password"
           autoComplete="new-password"
           required
           value={form.password}
           error={fieldErrors.password}
           onChange={(event) => updateField('password', event.target.value)}
-          placeholder="At least 6 characters"
+          placeholder="Pelo menos 6 caracteres"
         />
 
         <Input
-          label="Confirm password"
+          label="Confirme a senha"
           type="password"
           autoComplete="new-password"
           required
           value={form.confirmPassword}
           error={fieldErrors.confirmPassword}
           onChange={(event) => updateField('confirmPassword', event.target.value)}
-          placeholder="Repeat your password"
+          placeholder="Repita a senha"
         />
 
         <Button type="submit" size="lg" fullWidth isLoading={isSubmitting} className="mt-2">
-          Create account
+          Criar conta
         </Button>
       </form>
     </AuthLayout>
