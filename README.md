@@ -141,6 +141,20 @@ The frontend ships with a small, self-contained design system in
 - **Motion** — `animate-fade-up`, `animate-fade-in`, `animate-scale-in` and a
   shimmer used by the skeleton loaders.
 
+## UI toolkit
+
+- **shadcn/ui** components live in `frontend/src/components/ui` (`components.json`
+  is configured, so `npx shadcn@latest add <component>` works). They were adapted
+  to the palette above instead of bringing their own theme: Dialog, Badge,
+  Skeleton, Input/Textarea, Label, Select and the Sonner toaster.
+- **Radix UI** powers the accessible primitives behind those components.
+- **framer-motion** handles the step transitions, list stagger and card hover
+  lift. `MotionConfig reducedMotion="user"` plus a `prefers-reduced-motion` block
+  in the CSS disable movement for users who ask for it.
+- **lucide-react** provides the icon set.
+- **sonner** shows the result of actions (booking, cancelling, service changes);
+  inline alerts are reserved for load failures and empty states.
+
 ## Frontend routes
 
 | Route           | Access | Description                                      |
@@ -163,3 +177,4 @@ The frontend ships with a small, self-contained design system in
 - [x] 7. "My appointments" page with cancel
 - [x] 8. Admin panel: manage services and view the day's agenda
 - [x] 9. Visual redesign: design system, typography and polished UI
+- [x] 10. shadcn/ui primitives, toasts and motion

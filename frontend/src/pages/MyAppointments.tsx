@@ -1,20 +1,21 @@
 import { useMemo, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
+import { CalendarPlus, CalendarRange } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
 import { Alert } from '../components/Alert';
 import { AppointmentCard } from '../components/AppointmentCard';
 import { Button } from '../components/Button';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { SkeletonList } from '../components/Skeleton';
 import { useMyAppointments } from '../hooks/useMyAppointments';
+import { staggerContainer, staggerItem } from '../lib/motion';
 import { getErrorMessage } from '../services/api';
 import * as appointmentService from '../services/appointment.service';
 import type { Appointment } from '../types';
 
 export default function MyAppointments() {
-  const location = useLocation();
-  const justBooked = Boolean((location.state as { justBooked?: boolean } | null)?.justBooked);
-
-  const { appointments, isLoading, error, loadedAt, setError, refresh } = useMyAppointments();
+  const { appointments, isLoading, error, loadedAt, refresh } = useMyAppointments();
   const [toCancel, setToCancel] = useState<Appointment | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
@@ -39,10 +40,13 @@ export default function MyAppointments() {
 
     try {
       await appointmentService.cancelAppointment(toCancel.id);
+      toast.success('Appointment cancelled', {
+        description: `${toCancel.service.name} — the slot is free again.`,
+      });
       setToCancel(null);
       refresh();
     } catch (cancelError) {
-      setError(getErrorMessage(cancelError, 'Could not cancel this appointment'));
+      toast.error(getErrorMessage(cancelError, 'Could not cancel this appointment'));
       setToCancel(null);
     } finally {
       setIsCancelling(false);
@@ -61,11 +65,13 @@ export default function MyAppointments() {
         </div>
 
         <Link to="/book">
-          <Button size="lg">New appointment</Button>
+          <Button size="lg">
+            <CalendarPlus className="size-4" aria-hidden />
+            New appointment
+          </Button>
         </Link>
       </header>
 
-      {justBooked && <Alert tone="success">Appointment booked. See you soon!</Alert>}
       {error && <Alert tone="error">{error}</Alert>}
 
       {isLoading ? (
@@ -84,23 +90,7 @@ export default function MyAppointments() {
             {upcoming.length === 0 ? (
               <div className="surface flex flex-col items-center gap-4 px-6 py-14 text-center">
                 <span className="border-ink-700 bg-ink-900 text-mist-500 flex size-12 items-center justify-center rounded-2xl border">
-                  <svg viewBox="0 0 24 24" fill="none" className="size-5" aria-hidden>
-                    <rect
-                      x="3"
-                      y="5"
-                      width="18"
-                      height="16"
-                      rx="3"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    />
-                    <path
-                      d="M3 10h18M8 3v4M16 3v4"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                    />
-                  </svg>
+                  <CalendarRange className="size-5" aria-hidden />
                 </span>
                 <div>
                   <p className="font-display text-mist-100 text-base font-medium">
@@ -115,17 +105,38 @@ export default function MyAppointments() {
                 </Link>
               </div>
             ) : (
-              upcoming.map((appointment) => (
-                <AppointmentCard
-                  key={appointment.id}
-                  appointment={appointment}
-                  actions={
-                    <Button variant="danger" size="sm" onClick={() => setToCancel(appointment)}>
-                      Cancel
-                    </Button>
-                  }
-                />
-              ))
+              <motion.ul
+                className="flex flex-col gap-4"
+                variants={staggerContainer}
+                initial="hidden"
+                animate="visible"
+              >
+                <AnimatePresence initial={false}>
+                  {upcoming.map((appointment) => (
+                    <motion.li
+                      key={appointment.id}
+                      layout
+                      variants={staggerItem}
+                      exit={{ opacity: 0, y: -8 }}
+                      whileHover={{ y: -3 }}
+                      transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                    >
+                      <AppointmentCard
+                        appointment={appointment}
+                        actions={
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => setToCancel(appointment)}
+                          >
+                            Cancel
+                          </Button>
+                        }
+                      />
+                    </motion.li>
+                  ))}
+                </AnimatePresence>
+              </motion.ul>
             )}
           </div>
 
@@ -139,9 +150,18 @@ export default function MyAppointments() {
                 <span className="text-mist-500 text-xs tabular-nums">{past.length}</span>
               </div>
 
-              {past.map((appointment) => (
-                <AppointmentCard key={appointment.id} appointment={appointment} />
-              ))}
+              <motion.ul
+                className="flex flex-col gap-4"
+                variants={staggerContainer}
+                initial="hidden"
+                animate="visible"
+              >
+                {past.map((appointment) => (
+                  <motion.li key={appointment.id} variants={staggerItem}>
+                    <AppointmentCard appointment={appointment} />
+                  </motion.li>
+                ))}
+              </motion.ul>
             </div>
           )}
         </>

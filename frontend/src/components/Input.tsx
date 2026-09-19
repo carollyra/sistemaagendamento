@@ -1,4 +1,6 @@
 import { useId, type InputHTMLAttributes, type ReactNode } from 'react';
+import { Input as UiInput } from './ui/input';
+import { Label } from './ui/label';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -13,9 +15,7 @@ export function Input({ label, error, hint, icon, className = '', ...props }: In
 
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="text-mist-300 text-xs font-medium tracking-wide uppercase">
-        {label}
-      </label>
+      <Label htmlFor={id}>{label}</Label>
 
       <div className="relative">
         {icon && (
@@ -23,12 +23,12 @@ export function Input({ label, error, hint, icon, className = '', ...props }: In
             {icon}
           </span>
         )}
-        <input
+        <UiInput
           {...props}
           id={id}
           aria-invalid={Boolean(error)}
           aria-describedby={error || hint ? `${id}-description` : undefined}
-          className={`field ${icon ? 'pl-11' : ''} aria-[invalid=true]:border-red-500/60 aria-[invalid=true]:focus:ring-red-500/15 ${className}`}
+          className={`${icon ? 'pl-11' : ''} ${className}`}
         />
       </div>
 

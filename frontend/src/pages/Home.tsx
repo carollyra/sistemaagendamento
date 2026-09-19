@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Alert } from '../components/Alert';
 import { Button } from '../components/Button';
@@ -5,6 +7,7 @@ import { Skeleton } from '../components/Skeleton';
 import { useAuth } from '../hooks/useAuth';
 import { useNextSlots } from '../hooks/useNextSlots';
 import { usePublicServices } from '../hooks/usePublicServices';
+import { staggerContainer, staggerItem } from '../lib/motion';
 import { formatDayLabel, formatDuration, formatPrice, formatTime } from '../utils/format';
 
 const steps = [
@@ -70,15 +73,7 @@ export default function Home() {
             <Link to={primaryTo} className="sm:w-auto">
               <Button size="lg" fullWidth>
                 {isAuthenticated ? 'Book an appointment' : 'Create your account'}
-                <svg viewBox="0 0 24 24" fill="none" className="size-4" aria-hidden>
-                  <path
-                    d="M5 12h14m-6-6 6 6-6 6"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <ArrowRight className="size-4" aria-hidden />
               </Button>
             </Link>
 
@@ -172,9 +167,20 @@ export default function Home() {
         ) : services.length === 0 ? (
           <Alert>The catalogue is being updated. Check back soon.</Alert>
         ) : (
-          <ul className="grid gap-4 sm:grid-cols-2">
+          <motion.ul
+            className="grid gap-4 sm:grid-cols-2"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+          >
             {services.map((service) => (
-              <li key={service.id}>
+              <motion.li
+                key={service.id}
+                variants={staggerItem}
+                whileHover={{ y: -4 }}
+                transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+              >
                 <Link
                   to={primaryTo}
                   className="surface surface-hover group flex h-full flex-col gap-3 p-6"
@@ -196,21 +202,13 @@ export default function Home() {
                     </span>
                     <span className="text-mist-400 group-hover:text-gold-400 flex items-center gap-1.5 text-xs transition">
                       Book
-                      <svg viewBox="0 0 24 24" fill="none" className="size-3.5" aria-hidden>
-                        <path
-                          d="M5 12h14m-6-6 6 6-6 6"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
+                      <ArrowRight className="size-3.5" aria-hidden />
                     </span>
                   </div>
                 </Link>
-              </li>
+              </motion.li>
             ))}
-          </ul>
+          </motion.ul>
         )}
       </section>
 
@@ -223,17 +221,29 @@ export default function Home() {
           <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">Three steps, that's it</h2>
         </header>
 
-        <ol className="grid gap-4 sm:grid-cols-3">
+        <motion.ol
+          className="grid gap-4 sm:grid-cols-3"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
           {steps.map((step, index) => (
-            <li key={step.title} className="surface flex flex-col gap-3 p-6">
+            <motion.li
+              key={step.title}
+              variants={staggerItem}
+              whileHover={{ y: -4 }}
+              transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+              className="surface flex flex-col gap-3 p-6"
+            >
               <span className="border-gold-500/30 bg-gold-500/10 text-gold-400 font-display flex size-9 items-center justify-center rounded-xl border text-sm font-semibold">
                 {index + 1}
               </span>
               <h3 className="font-display text-base font-medium">{step.title}</h3>
               <p className="text-mist-400 text-sm leading-relaxed">{step.description}</p>
-            </li>
+            </motion.li>
           ))}
-        </ol>
+        </motion.ol>
       </section>
 
       {/* CTA */}

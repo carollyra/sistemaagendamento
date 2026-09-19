@@ -44,11 +44,7 @@ export function ServiceForm({ service, isSubmitting, onSubmit, onCancel }: Servi
   }
 
   return (
-    <form onSubmit={handleSubmit} className="surface animate-fade-up flex flex-col gap-5 p-6">
-      <h3 className="font-display text-base font-medium">
-        {service ? `Edit “${service.name}”` : 'New service'}
-      </h3>
-
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <Input
         label="Name"
         required
@@ -92,15 +88,15 @@ export function ServiceForm({ service, isSubmitting, onSubmit, onCancel }: Servi
         />
       </div>
 
-      <div className="border-ink-700/70 flex gap-3 border-t pt-5">
-        <Button type="submit" isLoading={isSubmitting}>
-          {service ? 'Save changes' : 'Create service'}
-        </Button>
+      <div className="border-ink-700/70 flex flex-col-reverse gap-2.5 border-t pt-5 sm:flex-row sm:justify-end">
         {onCancel && (
           <Button type="button" variant="secondary" onClick={onCancel}>
             Cancel
           </Button>
         )}
+        <Button type="submit" isLoading={isSubmitting}>
+          {service ? 'Save changes' : 'Create service'}
+        </Button>
       </div>
     </form>
   );

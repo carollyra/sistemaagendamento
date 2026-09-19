@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Menu, X } from 'lucide-react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from './Button';
@@ -75,23 +76,11 @@ export function Header() {
           aria-label="Toggle navigation"
           className="border-ink-700 bg-ink-800/60 text-mist-200 hover:border-ink-500 flex size-9 items-center justify-center rounded-xl border transition md:hidden"
         >
-          <svg viewBox="0 0 24 24" fill="none" className="size-4.5" aria-hidden>
-            {isMenuOpen ? (
-              <path
-                d="m6 6 12 12M18 6 6 18"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              />
-            ) : (
-              <path
-                d="M4 7h16M4 12h16M4 17h16"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              />
-            )}
-          </svg>
+          {isMenuOpen ? (
+            <X className="size-4.5" aria-hidden />
+          ) : (
+            <Menu className="size-4.5" aria-hidden />
+          )}
         </button>
       </div>
 

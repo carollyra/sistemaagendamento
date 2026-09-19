@@ -1,28 +1,36 @@
 import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
+import { toast } from 'sonner';
 import { Alert } from '../../components/Alert';
 import { AppointmentCard } from '../../components/AppointmentCard';
 import { Button } from '../../components/Button';
 import { SkeletonList } from '../../components/Skeleton';
+import { Input } from '../../components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
 import { useDayAgenda } from '../../hooks/useDayAgenda';
+import { staggerContainer, staggerItem } from '../../lib/motion';
 import { getErrorMessage } from '../../services/api';
 import * as appointmentService from '../../services/appointment.service';
 import type { Appointment } from '../../types';
-import { formatLongDate, formatPrice, todayISO } from '../../utils/format';
+import { addDays, formatLongDate, formatPrice, todayISO } from '../../utils/format';
 
-function shiftDate(date: string, days: number): string {
-  const [year, month, day] = date.split('-').map(Number);
-  const shifted = new Date(year, month - 1, day + days);
-
-  return [
-    shifted.getFullYear(),
-    String(shifted.getMonth() + 1).padStart(2, '0'),
-    String(shifted.getDate()).padStart(2, '0'),
-  ].join('-');
-}
+const QUICK_JUMPS = [
+  { value: '0', label: 'Today' },
+  { value: '1', label: 'Tomorrow' },
+  { value: '7', label: 'In a week' },
+  { value: '30', label: 'In a month' },
+];
 
 export function AdminAgenda() {
   const [date, setDate] = useState(() => todayISO());
-  const { appointments, isLoading, error, setError, refresh } = useDayAgenda(date);
+  const { appointments, isLoading, error, refresh } = useDayAgenda(date);
   const [busyId, setBusyId] = useState<string | null>(null);
 
   const scheduled = appointments.filter((appointment) => appointment.status === 'SCHEDULED');
@@ -30,18 +38,19 @@ export function AdminAgenda() {
 
   async function updateStatus(appointment: Appointment, status: 'COMPLETED' | 'CANCELLED') {
     setBusyId(appointment.id);
-    setError('');
 
     try {
       if (status === 'CANCELLED') {
         await appointmentService.cancelAppointment(appointment.id);
+        toast.success('Appointment cancelled', { description: appointment.user.name });
       } else {
         await appointmentService.updateAppointmentStatus(appointment.id, status);
+        toast.success('Appointment completed', { description: appointment.user.name });
       }
 
       refresh();
     } catch (updateError) {
-      setError(getErrorMessage(updateError, 'Could not update the appointment'));
+      toast.error(getErrorMessage(updateError, 'Could not update the appointment'));
     } finally {
       setBusyId(null);
     }
@@ -62,28 +71,41 @@ export function AdminAgenda() {
             variant="secondary"
             size="sm"
             aria-label="Previous day"
-            onClick={() => setDate((current) => shiftDate(current, -1))}
+            onClick={() => setDate((current) => addDays(current, -1))}
           >
-            ‹
+            <ChevronLeft className="size-4" aria-hidden />
           </Button>
-          <input
+
+          <Input
             type="date"
             value={date}
             onChange={(event) => setDate(event.target.value || todayISO())}
-            className="field w-auto py-2 [color-scheme:dark]"
+            className="w-auto py-2 [color-scheme:dark]"
             aria-label="Agenda date"
           />
+
           <Button
             variant="secondary"
             size="sm"
             aria-label="Next day"
-            onClick={() => setDate((current) => shiftDate(current, 1))}
+            onClick={() => setDate((current) => addDays(current, 1))}
           >
-            ›
+            <ChevronRight className="size-4" aria-hidden />
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => setDate(todayISO())}>
-            Today
-          </Button>
+
+          <Select value="" onValueChange={(value) => setDate(addDays(todayISO(), Number(value)))}>
+            <SelectTrigger size="sm" aria-label="Jump to a date">
+              <CalendarDays className="text-mist-500 size-4" aria-hidden />
+              <SelectValue placeholder="Jump to" />
+            </SelectTrigger>
+            <SelectContent>
+              {QUICK_JUMPS.map((jump) => (
+                <SelectItem key={jump.value} value={jump.value}>
+                  {jump.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -116,38 +138,53 @@ export function AdminAgenda() {
           <p className="text-mist-400 text-sm">No appointments booked for this date.</p>
         </div>
       ) : (
-        <ul className="flex flex-col gap-3">
-          {appointments.map((appointment) => (
-            <li key={appointment.id}>
-              <AppointmentCard
-                appointment={appointment}
-                showClient
-                actions={
-                  appointment.status === 'SCHEDULED' ? (
-                    <>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        isLoading={busyId === appointment.id}
-                        onClick={() => updateStatus(appointment, 'COMPLETED')}
-                      >
-                        Complete
-                      </Button>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        isLoading={busyId === appointment.id}
-                        onClick={() => updateStatus(appointment, 'CANCELLED')}
-                      >
-                        Cancel
-                      </Button>
-                    </>
-                  ) : null
-                }
-              />
-            </li>
-          ))}
-        </ul>
+        <motion.ul
+          key={date}
+          className="flex flex-col gap-4"
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+        >
+          <AnimatePresence initial={false}>
+            {appointments.map((appointment) => (
+              <motion.li
+                key={appointment.id}
+                layout
+                variants={staggerItem}
+                exit={{ opacity: 0, y: -8 }}
+                whileHover={{ y: -3 }}
+                transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <AppointmentCard
+                  appointment={appointment}
+                  showClient
+                  actions={
+                    appointment.status === 'SCHEDULED' ? (
+                      <>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          isLoading={busyId === appointment.id}
+                          onClick={() => updateStatus(appointment, 'COMPLETED')}
+                        >
+                          Complete
+                        </Button>
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          isLoading={busyId === appointment.id}
+                          onClick={() => updateStatus(appointment, 'CANCELLED')}
+                        >
+                          Cancel
+                        </Button>
+                      </>
+                    ) : null
+                  }
+                />
+              </motion.li>
+            ))}
+          </AnimatePresence>
+        </motion.ul>
       )}
     </div>
   );
