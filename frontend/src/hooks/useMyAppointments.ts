@@ -27,7 +27,7 @@ export function useMyAppointments() {
       })
       .catch((loadError) => {
         if (active) {
-          setError(getErrorMessage(loadError, 'Could not load your appointments'));
+          setError(getErrorMessage(loadError, 'Não foi possível carregar seus agendamentos'));
         }
       })
       .finally(() => {

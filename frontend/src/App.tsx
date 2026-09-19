@@ -30,7 +30,7 @@ export default function App() {
           <Route
             path="/admin"
             element={
-              <Suspense fallback={<SkeletonList rows={4} label="Loading admin panel" />}>
+              <Suspense fallback={<SkeletonList rows={4} label="Carregando painel" />}>
                 <Admin />
               </Suspense>
             }

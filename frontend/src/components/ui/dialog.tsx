@@ -58,7 +58,7 @@ function DialogContent({
             className="text-mist-500 hover:bg-ink-800 hover:text-mist-100 absolute top-5 right-5 rounded-lg p-1.5 transition duration-200 disabled:pointer-events-none"
           >
             <XIcon className="size-4" />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">Fechar</span>
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Content>

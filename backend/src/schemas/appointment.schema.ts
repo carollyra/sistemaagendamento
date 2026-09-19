@@ -3,16 +3,16 @@ import { isValidDateString } from '../utils/datetime.js';
 
 const dateString = z
   .string()
-  .refine(isValidDateString, { message: 'Date must be in the YYYY-MM-DD format' });
+  .refine(isValidDateString, { message: 'A data deve estar no formato AAAA-MM-DD' });
 
 export const createAppointmentSchema = z.object({
-  serviceId: z.uuid('Invalid service id'),
-  startsAt: z.iso.datetime({ offset: true, message: 'startsAt must be an ISO date-time' }),
+  serviceId: z.uuid('Serviço inválido'),
+  startsAt: z.iso.datetime({ offset: true, message: 'A data e hora devem estar no formato ISO' }),
   notes: z.string().trim().max(500).optional(),
 });
 
 export const availabilityQuerySchema = z.object({
-  serviceId: z.uuid('Invalid service id'),
+  serviceId: z.uuid('Serviço inválido'),
   date: dateString,
 });
 
@@ -25,7 +25,7 @@ export const updateStatusSchema = z.object({
 });
 
 export const idParamSchema = z.object({
-  id: z.uuid('Invalid id'),
+  id: z.uuid('Identificador inválido'),
 });
 
 export type CreateAppointmentInput = z.infer<typeof createAppointmentSchema>;

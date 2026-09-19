@@ -17,7 +17,7 @@ import * as serviceService from '../services/service.service';
 import type { Service } from '../types';
 import { buildDayOptions, formatDuration, formatPrice, formatTime } from '../utils/format';
 
-const STEPS = ['Service', 'Date', 'Time'];
+const STEPS = ['Serviço', 'Data', 'Horário'];
 const DAYS_AHEAD = 21;
 
 export default function Book() {
@@ -43,7 +43,9 @@ export default function Book() {
     serviceService
       .listServices()
       .then(setServices)
-      .catch((loadError) => setError(getErrorMessage(loadError, 'Could not load services')))
+      .catch((loadError) =>
+        setError(getErrorMessage(loadError, 'Não foi possível carregar os serviços')),
+      )
       .finally(() => setIsLoadingServices(false));
   }, []);
 
@@ -56,7 +58,7 @@ export default function Book() {
       setSlots(availability.slots);
     } catch (loadError) {
       setSlots([]);
-      setError(getErrorMessage(loadError, 'Could not load available times'));
+      setError(getErrorMessage(loadError, 'Não foi possível carregar os horários'));
     } finally {
       setIsLoadingSlots(false);
     }
@@ -103,15 +105,15 @@ export default function Book() {
         notes: notes.trim() || undefined,
       });
 
-      toast.success('Appointment booked', {
-        description: `${selectedService.name} · ${selectedDayLabel ?? selectedDate} at ${formatTime(
+      toast.success('Agendamento confirmado', {
+        description: `${selectedService.name} · ${selectedDayLabel ?? selectedDate} às ${formatTime(
           selectedSlot.startsAt,
         )}`,
       });
       navigate('/appointments');
     } catch (submitError) {
-      toast.error(getErrorMessage(submitError, 'Could not book this time'), {
-        description: 'The times below were just refreshed.',
+      toast.error(getErrorMessage(submitError, 'Não foi possível reservar este horário'), {
+        description: 'A lista de horários abaixo acabou de ser atualizada.',
       });
       void loadSlots(selectedService.id, selectedDate);
       setSelectedSlot(null);
@@ -124,11 +126,11 @@ export default function Book() {
     <section className="flex flex-col gap-10">
       <header className="flex flex-col gap-3">
         <p className="text-gold-500 text-xs font-medium tracking-[0.2em] uppercase">
-          New appointment
+          Novo agendamento
         </p>
-        <h1 className="text-3xl font-semibold sm:text-4xl">Book your visit</h1>
+        <h1 className="text-3xl font-semibold sm:text-4xl">Agende sua visita</h1>
         <p className="text-mist-400 max-w-lg text-sm leading-relaxed">
-          Choose a service, then a day, then one of the free times. Confirmation is instant.
+          Escolha o serviço, depois o dia e um dos horários livres. A confirmação é na hora.
         </p>
       </header>
 
@@ -153,7 +155,7 @@ export default function Book() {
               {isLoadingServices ? (
                 <SkeletonGrid />
               ) : services.length === 0 ? (
-                <Alert>No services available right now.</Alert>
+                <Alert>Nenhum serviço disponível no momento.</Alert>
               ) : (
                 <motion.div
                   className="grid gap-4 sm:grid-cols-2"
@@ -232,7 +234,7 @@ export default function Book() {
 
               <Button variant="ghost" size="sm" className="self-start" onClick={() => goToStep(0)}>
                 <ArrowLeft className="size-4" aria-hidden />
-                Back to services
+                Voltar aos serviços
               </Button>
             </motion.div>
           )}
@@ -258,7 +260,7 @@ export default function Book() {
               {isLoadingSlots ? (
                 <SkeletonSlots />
               ) : slots.length === 0 ? (
-                <Alert>No free times for this day. Pick another date.</Alert>
+                <Alert>Nenhum horário livre neste dia. Escolha outra data.</Alert>
               ) : (
                 <motion.div
                   className="grid grid-cols-3 gap-2.5 sm:grid-cols-5 lg:grid-cols-6"
@@ -287,32 +289,32 @@ export default function Book() {
               )}
 
               <Textarea
-                label="Notes (optional)"
+                label="Observações (opcional)"
                 value={notes}
                 onChange={(event) => setNotes(event.target.value)}
                 rows={3}
                 maxLength={500}
-                placeholder="Anything the barber should know?"
+                placeholder="Algo que o barbeiro precisa saber?"
               />
 
               <div className="border-ink-700/70 bg-ink-850/50 flex flex-col gap-4 rounded-xl border p-5 sm:flex-row sm:items-center sm:justify-between">
                 <div className="text-sm">
                   <p className="text-mist-400">
-                    {selectedSlot ? 'You are booking' : 'Select a time to continue'}
+                    {selectedSlot ? 'Você vai agendar' : 'Selecione um horário para continuar'}
                   </p>
                   {selectedSlot && (
                     <p className="font-display text-mist-100 mt-1 text-lg font-medium">
-                      {selectedDayLabel ?? selectedDate} at {formatTime(selectedSlot.startsAt)}
+                      {selectedDayLabel ?? selectedDate} às {formatTime(selectedSlot.startsAt)}
                     </p>
                   )}
                 </div>
 
                 <div className="flex flex-col gap-2.5 sm:flex-row">
                   <Button variant="secondary" onClick={() => goToStep(1)}>
-                    Change date
+                    Trocar a data
                   </Button>
                   <Button onClick={handleConfirm} isLoading={isSubmitting} disabled={!selectedSlot}>
-                    Confirm booking
+                    Confirmar agendamento
                   </Button>
                 </div>
               </div>

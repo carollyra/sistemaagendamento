@@ -4,7 +4,7 @@ import { AdminServices } from './AdminServices';
 
 const TABS = [
   { id: 'agenda', label: 'Agenda' },
-  { id: 'services', label: 'Services' },
+  { id: 'services', label: 'Serviços' },
 ] as const;
 
 type TabId = (typeof TABS)[number]['id'];
@@ -17,17 +17,17 @@ export default function Admin() {
       <header className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col gap-3">
           <p className="text-gold-500 text-xs font-medium tracking-[0.2em] uppercase">
-            Control room
+            Central de controle
           </p>
-          <h1 className="text-3xl font-semibold sm:text-4xl">Admin panel</h1>
+          <h1 className="text-3xl font-semibold sm:text-4xl">Painel administrativo</h1>
           <p className="text-mist-400 max-w-lg text-sm leading-relaxed">
-            Follow the daily schedule and keep the service catalogue sharp.
+            Acompanhe a agenda do dia e mantenha o catálogo de serviços em dia.
           </p>
         </div>
 
         <div
           role="tablist"
-          aria-label="Admin sections"
+          aria-label="Seções do painel"
           className="border-ink-700 bg-ink-850/70 inline-flex gap-1 self-start rounded-xl border p-1"
         >
           {TABS.map((item) => (

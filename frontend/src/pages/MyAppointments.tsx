@@ -40,13 +40,13 @@ export default function MyAppointments() {
 
     try {
       await appointmentService.cancelAppointment(toCancel.id);
-      toast.success('Appointment cancelled', {
-        description: `${toCancel.service.name} — the slot is free again.`,
+      toast.success('Agendamento cancelado', {
+        description: `${toCancel.service.name} — o horário voltou a ficar livre.`,
       });
       setToCancel(null);
       refresh();
     } catch (cancelError) {
-      toast.error(getErrorMessage(cancelError, 'Could not cancel this appointment'));
+      toast.error(getErrorMessage(cancelError, 'Não foi possível cancelar este agendamento'));
       setToCancel(null);
     } finally {
       setIsCancelling(false);
@@ -57,17 +57,19 @@ export default function MyAppointments() {
     <section className="flex flex-col gap-10">
       <header className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col gap-3">
-          <p className="text-gold-500 text-xs font-medium tracking-[0.2em] uppercase">Your chair</p>
-          <h1 className="text-3xl font-semibold sm:text-4xl">My appointments</h1>
+          <p className="text-gold-500 text-xs font-medium tracking-[0.2em] uppercase">
+            Sua cadeira
+          </p>
+          <h1 className="text-3xl font-semibold sm:text-4xl">Meus agendamentos</h1>
           <p className="text-mist-400 max-w-lg text-sm leading-relaxed">
-            Upcoming bookings and everything you have booked before.
+            Seus próximos horários e tudo o que você já agendou.
           </p>
         </div>
 
         <Link to="/book">
           <Button size="lg">
             <CalendarPlus className="size-4" aria-hidden />
-            New appointment
+            Novo agendamento
           </Button>
         </Link>
       </header>
@@ -75,13 +77,13 @@ export default function MyAppointments() {
       {error && <Alert tone="error">{error}</Alert>}
 
       {isLoading ? (
-        <SkeletonList rows={3} label="Loading appointments" />
+        <SkeletonList rows={3} label="Carregando agendamentos" />
       ) : (
         <>
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-4">
               <h2 className="text-mist-300 text-xs font-medium tracking-[0.2em] uppercase">
-                Upcoming
+                Próximos
               </h2>
               <span className="bg-ink-700 h-px flex-1" aria-hidden />
               <span className="text-mist-500 text-xs tabular-nums">{upcoming.length}</span>
@@ -94,14 +96,14 @@ export default function MyAppointments() {
                 </span>
                 <div>
                   <p className="font-display text-mist-100 text-base font-medium">
-                    Nothing booked yet
+                    Nenhum horário agendado
                   </p>
                   <p className="text-mist-400 mt-1.5 text-sm">
-                    Your next cut is a couple of taps away.
+                    Seu próximo corte está a dois toques daqui.
                   </p>
                 </div>
                 <Link to="/book">
-                  <Button>Book an appointment</Button>
+                  <Button>Agendar horário</Button>
                 </Link>
               </div>
             ) : (
@@ -129,7 +131,7 @@ export default function MyAppointments() {
                             size="sm"
                             onClick={() => setToCancel(appointment)}
                           >
-                            Cancel
+                            Cancelar
                           </Button>
                         }
                       />
@@ -144,7 +146,7 @@ export default function MyAppointments() {
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-4">
                 <h2 className="text-mist-300 text-xs font-medium tracking-[0.2em] uppercase">
-                  History
+                  Histórico
                 </h2>
                 <span className="bg-ink-700 h-px flex-1" aria-hidden />
                 <span className="text-mist-500 text-xs tabular-nums">{past.length}</span>
@@ -169,11 +171,11 @@ export default function MyAppointments() {
 
       <ConfirmDialog
         open={Boolean(toCancel)}
-        title="Cancel appointment?"
+        title="Cancelar agendamento?"
         description={
-          toCancel ? `${toCancel.service.name} — this frees the slot for someone else.` : ''
+          toCancel ? `${toCancel.service.name} — o horário fica livre para outra pessoa.` : ''
         }
-        confirmLabel="Cancel appointment"
+        confirmLabel="Sim, cancelar"
         isLoading={isCancelling}
         onConfirm={handleCancel}
         onCancel={() => setToCancel(null)}

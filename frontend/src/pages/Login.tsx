@@ -23,10 +23,10 @@ export default function Login() {
 
     try {
       const user = await signIn({ email, password });
-      toast.success(`Welcome back, ${user.name.split(' ')[0]}`);
+      toast.success(`Bem-vindo de volta, ${user.name.split(' ')[0]}!`);
       navigate(user.role === 'ADMIN' ? '/admin' : redirectTo, { replace: true });
     } catch (submitError) {
-      toast.error(getErrorMessage(submitError, 'Could not sign in'));
+      toast.error(getErrorMessage(submitError, 'Não foi possível entrar'));
     } finally {
       setIsSubmitting(false);
     }
@@ -34,33 +34,33 @@ export default function Login() {
 
   return (
     <AuthLayout
-      title="Welcome back"
-      subtitle="Sign in to book and manage your appointments."
+      title="Que bom te ver de novo"
+      subtitle="Entre para agendar e acompanhar seus horários."
       footer={
         <>
-          Don&apos;t have an account?{' '}
+          Ainda não tem conta?{' '}
           <Link
             to="/register"
             className="text-gold-400 hover:text-gold-300 font-medium underline-offset-4 hover:underline"
           >
-            Create one
+            Criar agora
           </Link>
         </>
       }
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <Input
-          label="Email"
+          label="E-mail"
           type="email"
           autoComplete="email"
           required
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          placeholder="you@mail.com"
+          placeholder="voce@email.com"
         />
 
         <Input
-          label="Password"
+          label="Senha"
           type="password"
           autoComplete="current-password"
           required
@@ -70,7 +70,7 @@ export default function Login() {
         />
 
         <Button type="submit" size="lg" fullWidth isLoading={isSubmitting} className="mt-2">
-          Sign in
+          Entrar
         </Button>
       </form>
     </AuthLayout>

@@ -28,11 +28,11 @@ export function ServiceFormDialog({
     >
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>{service ? `Edit “${service.name}”` : 'New service'}</DialogTitle>
+          <DialogTitle>{service ? `Editar “${service.name}”` : 'Novo serviço'}</DialogTitle>
           <DialogDescription>
             {service
-              ? 'Changes apply to future bookings right away.'
-              : 'Duration drives the slots clients can book.'}
+              ? 'As alterações valem para os próximos agendamentos.'
+              : 'A duração define os horários que os clientes podem reservar.'}
           </DialogDescription>
         </DialogHeader>
 

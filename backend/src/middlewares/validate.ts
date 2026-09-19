@@ -10,7 +10,7 @@ export function validate(schema: ZodType, part: RequestPart = 'body') {
 
     if (!result.success) {
       res.status(400).json({
-        message: 'Validation error',
+        message: 'Erro de validação',
         errors: z.treeifyError(result.error),
       });
       return;

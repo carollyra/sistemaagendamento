@@ -10,9 +10,9 @@ interface AuthLayoutProps {
 }
 
 const highlights = [
-  'Real-time availability, no phone calls',
-  'Cancel or reschedule in two taps',
-  'Your history always at hand',
+  'Horários em tempo real, sem ligação',
+  'Cancele ou remarque em dois toques',
+  'Seu histórico sempre à mão',
 ];
 
 export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProps) {
@@ -23,13 +23,13 @@ export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProp
         <Logo />
 
         <div className="max-w-md">
-          <p className="text-gold-500 text-xs font-medium tracking-[0.2em] uppercase">Since 2014</p>
+          <p className="text-gold-500 text-xs font-medium tracking-[0.2em] uppercase">Desde 2014</p>
           <h2 className="font-display mt-5 text-4xl leading-[1.1] font-semibold text-balance">
-            Precision cuts, <span className="text-gradient">booked in seconds</span>
+            Corte impecável, <span className="text-gradient">agendado em segundos</span>
           </h2>
           <p className="text-mist-400 mt-5 leading-relaxed">
-            A calmer way to run the chair. Pick a service, grab a slot and let the schedule take
-            care of itself.
+            Um jeito mais tranquilo de cuidar da cadeira. Escolha o serviço, pegue um horário e
+            deixe a agenda se organizar sozinha.
           </p>
 
           <ul className="mt-10 flex flex-col gap-4">
@@ -44,7 +44,7 @@ export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProp
           </ul>
         </div>
 
-        <p className="text-mist-500 text-xs">Monday to Saturday · 09:00 – 19:00</p>
+        <p className="text-mist-500 text-xs">Segunda a sábado · 09h – 19h</p>
       </aside>
 
       <main className="flex min-h-screen items-center justify-center px-5 py-12 sm:px-8">

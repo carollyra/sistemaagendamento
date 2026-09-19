@@ -12,16 +12,16 @@ import { formatDayLabel, formatDuration, formatPrice, formatTime } from '../util
 
 const steps = [
   {
-    title: 'Pick a service',
-    description: 'Every cut and trim with its real duration and price — no surprises.',
+    title: 'Escolha o serviço',
+    description: 'Cada corte e barba com duração e preço reais — sem surpresas.',
   },
   {
-    title: 'Choose a day',
-    description: 'Three weeks of availability, always in sync with the chair.',
+    title: 'Escolha o dia',
+    description: 'Três semanas de agenda, sempre em sincronia com a cadeira.',
   },
   {
-    title: 'Grab your time',
-    description: 'Only free slots are shown. Confirm and you are done.',
+    title: 'Pegue seu horário',
+    description: 'Só aparecem horários livres. Confirmou, está feito.',
   },
 ];
 
@@ -46,51 +46,51 @@ export default function Home() {
         <div className="flex flex-col items-start gap-8">
           <span className="border-ink-700 bg-ink-850/80 text-mist-300 inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs">
             <span className="bg-gold-500 size-1.5 animate-pulse rounded-full" aria-hidden />
-            Booking open · Mon–Sat
+            Agenda aberta · Seg a sáb
           </span>
 
           <div className="max-w-3xl">
             <h1 className="font-display text-4xl leading-[1.05] font-semibold text-balance sm:text-6xl">
               {isAuthenticated ? (
                 <>
-                  Welcome back, <span className="text-gradient">{user?.name.split(' ')[0]}</span>.
-                  Ready for the chair?
+                  Olá, <span className="text-gradient">{user?.name.split(' ')[0]}</span>. Bora para
+                  a cadeira?
                 </>
               ) : (
                 <>
-                  The barbershop that <span className="text-gradient">respects your time</span>
+                  A barbearia que <span className="text-gradient">respeita o seu tempo</span>
                 </>
               )}
             </h1>
 
             <p className="text-mist-400 mt-6 max-w-xl text-base leading-relaxed sm:text-lg">
-              Real-time availability, instant confirmation and a schedule that never double books.
-              Pick a service, choose your slot, show up sharp.
+              Horários em tempo real, confirmação na hora e uma agenda que nunca dobra reserva.
+              Escolha o serviço, pegue seu horário e apareça no capricho.
             </p>
           </div>
 
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
             <Link to={primaryTo} className="sm:w-auto">
               <Button size="lg" fullWidth>
-                {isAuthenticated ? 'Book an appointment' : 'Create your account'}
+                {isAuthenticated ? 'Agendar horário' : 'Criar minha conta'}
                 <ArrowRight className="size-4" aria-hidden />
               </Button>
             </Link>
 
             <Link to={isAuthenticated ? '/appointments' : '/login'} className="sm:w-auto">
               <Button size="lg" variant="secondary" fullWidth>
-                {isAuthenticated ? 'My appointments' : 'I already have an account'}
+                {isAuthenticated ? 'Meus agendamentos' : 'Já tenho conta'}
               </Button>
             </Link>
           </div>
 
           <dl className="border-ink-800 grid w-full grid-cols-2 gap-6 border-t pt-8 sm:grid-cols-4">
             {[
-              { label: 'Open', value: 'Mon–Sat' },
-              { label: 'Hours', value: '09–19' },
-              { label: 'Services', value: isLoading ? '—' : String(services.length) },
+              { label: 'Aberto', value: 'Seg–Sáb' },
+              { label: 'Horário', value: '09h–19h' },
+              { label: 'Serviços', value: isLoading ? '—' : String(services.length) },
               {
-                label: 'From',
+                label: 'A partir de',
                 value: priceFrom === null ? '—' : formatPrice(priceFrom),
               },
             ].map((stat) => (
@@ -112,7 +112,7 @@ export default function Home() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-mist-500 text-[11px] tracking-[0.15em] uppercase">
-                  Free {formatDayLabel(nextSlots.date).toLowerCase()}
+                  Livre {formatDayLabel(nextSlots.date).toLowerCase()}
                 </p>
                 <h2 className="font-display mt-2 text-lg font-medium">{featuredService.name}</h2>
               </div>
@@ -134,7 +134,7 @@ export default function Home() {
             </div>
 
             <p className="text-mist-500 border-ink-700/70 border-t pt-5 text-xs leading-relaxed">
-              Times update as clients book. Reserve one and it disappears for everyone else.
+              Os horários mudam conforme os clientes agendam. Reservou, sai da lista de todo mundo.
             </p>
           </aside>
         )}
@@ -144,11 +144,13 @@ export default function Home() {
       <section className="flex flex-col gap-8">
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-gold-500 text-xs font-medium tracking-[0.2em] uppercase">The menu</p>
-            <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">Services & pricing</h2>
+            <p className="text-gold-500 text-xs font-medium tracking-[0.2em] uppercase">
+              O cardápio
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">Serviços e preços</h2>
           </div>
           <p className="text-mist-400 max-w-sm text-sm leading-relaxed">
-            Straight from the shop's live catalogue — durations and prices are always current.
+            Direto do catálogo da barbearia — durações e preços sempre atualizados.
           </p>
         </header>
 
@@ -165,7 +167,7 @@ export default function Home() {
             ))}
           </div>
         ) : services.length === 0 ? (
-          <Alert>The catalogue is being updated. Check back soon.</Alert>
+          <Alert>O catálogo está sendo atualizado. Volte em instantes.</Alert>
         ) : (
           <motion.ul
             className="grid gap-4 sm:grid-cols-2"
@@ -201,7 +203,7 @@ export default function Home() {
                       {formatDuration(service.durationMinutes)}
                     </span>
                     <span className="text-mist-400 group-hover:text-gold-400 flex items-center gap-1.5 text-xs transition">
-                      Book
+                      Agendar
                       <ArrowRight className="size-3.5" aria-hidden />
                     </span>
                   </div>
@@ -216,9 +218,9 @@ export default function Home() {
       <section className="flex flex-col gap-8">
         <header>
           <p className="text-gold-500 text-xs font-medium tracking-[0.2em] uppercase">
-            How it works
+            Como funciona
           </p>
-          <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">Three steps, that's it</h2>
+          <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">Três passos e pronto</h2>
         </header>
 
         <motion.ol
@@ -249,14 +251,14 @@ export default function Home() {
       {/* CTA */}
       <section className="rounded-panel border-ink-700/70 bg-ink-850/60 aurora shadow-panel relative overflow-hidden border px-6 py-14 text-center sm:px-16 sm:py-20">
         <h2 className="font-display mx-auto max-w-2xl text-3xl leading-tight font-semibold text-balance sm:text-4xl">
-          Your chair is one tap away
+          Sua cadeira está a um toque
         </h2>
         <p className="text-mist-400 mx-auto mt-4 max-w-md text-sm leading-relaxed">
-          Join the clients who stopped waiting on the phone.
+          Junte-se a quem parou de esperar no telefone.
         </p>
         <div className="mt-8 flex justify-center">
           <Link to={primaryTo}>
-            <Button size="lg">{isAuthenticated ? 'Book now' : 'Get started'}</Button>
+            <Button size="lg">{isAuthenticated ? 'Agendar agora' : 'Começar agora'}</Button>
           </Link>
         </div>
       </section>

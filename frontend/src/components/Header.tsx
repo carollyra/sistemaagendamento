@@ -19,9 +19,9 @@ export function Header() {
 
   const links = isAuthenticated
     ? [
-        { to: '/book', label: 'Book' },
-        { to: '/appointments', label: 'My appointments' },
-        ...(isAdmin ? [{ to: '/admin', label: 'Admin' }] : []),
+        { to: '/book', label: 'Agendar' },
+        { to: '/appointments', label: 'Meus agendamentos' },
+        ...(isAdmin ? [{ to: '/admin', label: 'Administração' }] : []),
       ]
     : [];
 
@@ -54,16 +54,16 @@ export function Header() {
                 </span>
               </div>
               <Button variant="ghost" size="sm" onClick={signOut}>
-                Sign out
+                Sair
               </Button>
             </>
           ) : (
             <>
               <NavLink to="/login" className={navLinkClass}>
-                Sign in
+                Entrar
               </NavLink>
               <Link to="/register">
-                <Button size="sm">Get started</Button>
+                <Button size="sm">Criar conta</Button>
               </Link>
             </>
           )}
@@ -73,7 +73,7 @@ export function Header() {
           type="button"
           onClick={() => setIsMenuOpen((open) => !open)}
           aria-expanded={isMenuOpen}
-          aria-label="Toggle navigation"
+          aria-label="Abrir menu"
           className="border-ink-700 bg-ink-800/60 text-mist-200 hover:border-ink-500 flex size-9 items-center justify-center rounded-xl border transition md:hidden"
         >
           {isMenuOpen ? (
@@ -113,7 +113,7 @@ export function Header() {
                   signOut();
                 }}
               >
-                Sign out
+                Sair
               </Button>
             ) : (
               <div className="mt-2 flex flex-col gap-2">
@@ -123,10 +123,10 @@ export function Header() {
                   onClick={closeMenu}
                   className="text-mist-300 hover:text-mist-100 rounded-lg px-3 py-2.5 text-sm"
                 >
-                  Sign in
+                  Entrar
                 </Link>
                 <Link to="/register" onClick={closeMenu}>
-                  <Button fullWidth>Get started</Button>
+                  <Button fullWidth>Criar conta</Button>
                 </Link>
               </div>
             )}

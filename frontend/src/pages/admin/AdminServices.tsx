@@ -51,7 +51,7 @@ export function AdminServices() {
           durationMinutes: values.durationMinutes,
           price: values.price,
         });
-        toast.success('Service updated', { description: values.name });
+        toast.success('Serviço atualizado', { description: values.name });
       } else {
         await serviceService.createService({
           name: values.name,
@@ -59,13 +59,13 @@ export function AdminServices() {
           durationMinutes: values.durationMinutes,
           price: values.price,
         });
-        toast.success('Service created', { description: values.name });
+        toast.success('Serviço criado', { description: values.name });
       }
 
       closeForm();
       refresh();
     } catch (submitError) {
-      toast.error(getErrorMessage(submitError, 'Could not save the service'));
+      toast.error(getErrorMessage(submitError, 'Não foi possível salvar o serviço'));
     } finally {
       setIsSubmitting(false);
     }
@@ -74,12 +74,12 @@ export function AdminServices() {
   async function toggleActive(service: Service) {
     try {
       await serviceService.updateService(service.id, { active: !service.active });
-      toast.success(service.active ? 'Service deactivated' : 'Service activated', {
+      toast.success(service.active ? 'Serviço desativado' : 'Serviço ativado', {
         description: service.name,
       });
       refresh();
     } catch (toggleError) {
-      toast.error(getErrorMessage(toggleError, 'Could not update the service'));
+      toast.error(getErrorMessage(toggleError, 'Não foi possível atualizar o serviço'));
     }
   }
 
@@ -92,13 +92,13 @@ export function AdminServices() {
 
     try {
       await serviceService.deleteService(toDelete.id);
-      toast.success(`“${toDelete.name}” removed`, {
-        description: 'Services with appointments are deactivated instead of deleted.',
+      toast.success(`“${toDelete.name}” removido`, {
+        description: 'Serviços com agendamentos são desativados em vez de excluídos.',
       });
       setToDelete(null);
       refresh();
     } catch (deleteError) {
-      toast.error(getErrorMessage(deleteError, 'Could not delete the service'));
+      toast.error(getErrorMessage(deleteError, 'Não foi possível excluir o serviço'));
       setToDelete(null);
     } finally {
       setIsDeleting(false);
@@ -109,27 +109,29 @@ export function AdminServices() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="font-display text-xl font-semibold">Service catalogue</h2>
+          <h2 className="font-display text-xl font-semibold">Catálogo de serviços</h2>
           <p className="text-mist-500 mt-1 text-sm">
-            {services.length} {services.length === 1 ? 'service' : 'services'} · inactive ones stay
-            hidden from clients
+            {services.length} {services.length === 1 ? 'serviço' : 'serviços'} · os inativos ficam
+            ocultos para os clientes
           </p>
         </div>
         <Button onClick={openCreateForm}>
           <Plus className="size-4" aria-hidden />
-          New service
+          Novo serviço
         </Button>
       </div>
 
       {error && <Alert tone="error">{error}</Alert>}
 
       {isLoading ? (
-        <SkeletonList rows={4} label="Loading services" />
+        <SkeletonList rows={4} label="Carregando serviços" />
       ) : services.length === 0 ? (
         <div className="surface flex flex-col items-center gap-4 px-6 py-14 text-center">
-          <p className="font-display text-mist-100 text-base font-medium">No services yet</p>
-          <p className="text-mist-400 text-sm">Create the first one to open the agenda.</p>
-          <Button onClick={openCreateForm}>New service</Button>
+          <p className="font-display text-mist-100 text-base font-medium">
+            Nenhum serviço cadastrado
+          </p>
+          <p className="text-mist-400 text-sm">Cadastre o primeiro para abrir a agenda.</p>
+          <Button onClick={openCreateForm}>Novo serviço</Button>
         </div>
       ) : (
         <motion.ul
@@ -159,7 +161,7 @@ export function AdminServices() {
                   <div className="flex flex-col gap-1.5">
                     <div className="flex flex-wrap items-center gap-2.5">
                       <h3 className="font-display text-base font-medium">{service.name}</h3>
-                      {!service.active && <Badge variant="muted">Inactive</Badge>}
+                      {!service.active && <Badge variant="muted">Inativo</Badge>}
                     </div>
                     {service.description && (
                       <p className="text-mist-400 text-sm leading-relaxed">{service.description}</p>
@@ -172,13 +174,13 @@ export function AdminServices() {
 
                 <div className="flex flex-wrap gap-2">
                   <Button variant="secondary" size="sm" onClick={() => openEditForm(service)}>
-                    Edit
+                    Editar
                   </Button>
                   <Button variant="ghost" size="sm" onClick={() => toggleActive(service)}>
-                    {service.active ? 'Deactivate' : 'Activate'}
+                    {service.active ? 'Desativar' : 'Ativar'}
                   </Button>
                   <Button variant="danger" size="sm" onClick={() => setToDelete(service)}>
-                    Delete
+                    Excluir
                   </Button>
                 </div>
               </motion.li>
@@ -197,13 +199,13 @@ export function AdminServices() {
 
       <ConfirmDialog
         open={Boolean(toDelete)}
-        title="Delete service?"
+        title="Excluir serviço?"
         description={
           toDelete
-            ? `“${toDelete.name}” will be removed. If it already has appointments it is deactivated instead.`
+            ? `“${toDelete.name}” será removido. Se já tiver agendamentos, ele é apenas desativado.`
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel="Excluir"
         isLoading={isDeleting}
         onConfirm={handleDelete}
         onCancel={() => setToDelete(null)}

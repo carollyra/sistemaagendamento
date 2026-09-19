@@ -1,23 +1,32 @@
+function capitalize(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 const currencyFormatter = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
   currency: 'BRL',
 });
 
-const dateFormatter = new Intl.DateTimeFormat('en-GB', {
-  weekday: 'short',
-  day: '2-digit',
-  month: 'short',
-});
+const weekDayFormatter = new Intl.DateTimeFormat('pt-BR', { weekday: 'short' });
 
-const dateTimeFormatter = new Intl.DateTimeFormat('en-GB', {
+/** "Sex 18/09" — compact enough for the day picker grid. */
+function formatShortDay(date: Date): string {
+  const weekDay = capitalize(weekDayFormatter.format(date).replace(/\.$/, ''));
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+
+  return `${weekDay} ${day}/${month}`;
+}
+
+const dateTimeFormatter = new Intl.DateTimeFormat('pt-BR', {
   day: '2-digit',
-  month: 'short',
+  month: 'long',
   year: 'numeric',
   hour: '2-digit',
   minute: '2-digit',
 });
 
-const timeFormatter = new Intl.DateTimeFormat('en-GB', {
+const timeFormatter = new Intl.DateTimeFormat('pt-BR', {
   hour: '2-digit',
   minute: '2-digit',
 });
@@ -60,7 +69,7 @@ export function buildDayOptions(days: number): { value: string; label: string }[
 
     options.push({
       value,
-      label: offset === 0 ? 'Today' : dateFormatter.format(date),
+      label: offset === 0 ? 'Hoje' : formatShortDay(date),
     });
   }
 
@@ -81,12 +90,14 @@ export function todayISO(): string {
 export function formatLongDate(isoDate: string): string {
   const [year, month, day] = isoDate.split('-').map(Number);
 
-  return new Intl.DateTimeFormat('en-GB', {
-    weekday: 'long',
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  }).format(new Date(year, month - 1, day));
+  return capitalize(
+    new Intl.DateTimeFormat('pt-BR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }).format(new Date(year, month - 1, day)),
+  );
 }
 
 /** Adds days to a YYYY-MM-DD string, returning the same format. */
@@ -101,23 +112,19 @@ export function addDays(date: string, days: number): string {
   ].join('-');
 }
 
-/** Short, human label for a YYYY-MM-DD date: "Today", "Tomorrow" or "Fri 20 Sep". */
+/** Short, human label for a YYYY-MM-DD date: "Hoje", "Amanhã" or "Sex 20/09". */
 export function formatDayLabel(date: string): string {
   const today = todayISO();
 
   if (date === today) {
-    return 'Today';
+    return 'Hoje';
   }
 
   if (date === addDays(today, 1)) {
-    return 'Tomorrow';
+    return 'Amanhã';
   }
 
   const [year, month, day] = date.split('-').map(Number);
 
-  return new Intl.DateTimeFormat('en-GB', {
-    weekday: 'short',
-    day: '2-digit',
-    month: 'short',
-  }).format(new Date(year, month - 1, day));
+  return formatShortDay(new Date(year, month - 1, day));
 }

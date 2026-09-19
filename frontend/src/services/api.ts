@@ -22,7 +22,7 @@ interface ApiErrorBody {
 }
 
 /** Turns an axios error into a message that can be shown to the user. */
-export function getErrorMessage(error: unknown, fallback = 'Something went wrong'): string {
+export function getErrorMessage(error: unknown, fallback = 'Algo deu errado'): string {
   if (error instanceof AxiosError) {
     const data = error.response?.data as ApiErrorBody | undefined;
 

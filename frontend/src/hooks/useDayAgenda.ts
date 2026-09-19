@@ -27,7 +27,7 @@ export function useDayAgenda(date: string) {
       .catch((loadError) => {
         if (active) {
           setAgenda({ date, appointments: [] });
-          setError(getErrorMessage(loadError, 'Could not load the agenda'));
+          setError(getErrorMessage(loadError, 'Não foi possível carregar a agenda'));
         }
       });
 

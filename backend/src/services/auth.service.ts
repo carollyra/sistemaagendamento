@@ -38,7 +38,7 @@ export async function register(input: RegisterInput) {
   const existing = await prisma.user.findUnique({ where: { email: input.email } });
 
   if (existing) {
-    throw new AppError(409, 'Email already registered');
+    throw new AppError(409, 'Este e-mail já está cadastrado');
   }
 
   const user = await prisma.user.create({
@@ -57,7 +57,7 @@ export async function login(input: LoginInput) {
   const user = await prisma.user.findUnique({ where: { email: input.email } });
 
   if (!user || !(await bcrypt.compare(input.password, user.passwordHash))) {
-    throw new AppError(401, 'Invalid email or password');
+    throw new AppError(401, 'E-mail ou senha inválidos');
   }
 
   return buildSession(user);
@@ -67,7 +67,7 @@ export async function getProfile(userId: string) {
   const user = await prisma.user.findUnique({ where: { id: userId } });
 
   if (!user) {
-    throw new AppError(404, 'User not found');
+    throw new AppError(404, 'Usuário não encontrado');
   }
 
   return toPublicUser(user);

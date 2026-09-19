@@ -32,13 +32,13 @@ function assertWithinBusinessHours(startsAt: Date, durationMinutes: number) {
   const { minutes, weekDay } = toZonedParts(startsAt);
 
   if (!businessHours.workingWeekDays.includes(weekDay)) {
-    throw new AppError(422, 'The barbershop is closed on the selected day');
+    throw new AppError(422, 'A barbearia está fechada no dia selecionado');
   }
 
   if (minutes < openingMinutes || minutes + durationMinutes > closingMinutes) {
     throw new AppError(
       422,
-      `Appointments must fit between ${minutesToTime(openingMinutes)} and ${minutesToTime(closingMinutes)}`,
+      `Os agendamentos devem estar entre ${minutesToTime(openingMinutes)} e ${minutesToTime(closingMinutes)}`,
     );
   }
 }
@@ -47,13 +47,13 @@ export async function createAppointment(userId: string, input: CreateAppointment
   const service = await getServiceById(input.serviceId);
 
   if (!service.active) {
-    throw new AppError(422, 'This service is not available');
+    throw new AppError(422, 'Este serviço não está disponível');
   }
 
   const startsAt = new Date(input.startsAt);
 
   if (startsAt.getTime() <= Date.now()) {
-    throw new AppError(422, 'Appointments must be scheduled in the future');
+    throw new AppError(422, 'O agendamento deve ser feito para uma data futura');
   }
 
   assertWithinBusinessHours(startsAt, service.durationMinutes);
@@ -72,7 +72,7 @@ export async function createAppointment(userId: string, input: CreateAppointment
       });
 
       if (conflict) {
-        throw new AppError(409, 'This time slot is already taken');
+        throw new AppError(409, 'Este horário já está reservado');
       }
 
       return tx.appointment.create({
@@ -120,7 +120,7 @@ export async function getAvailability(serviceId: string, date: string) {
   const service = await getServiceById(serviceId);
 
   if (!service.active) {
-    throw new AppError(422, 'This service is not available');
+    throw new AppError(422, 'Este serviço não está disponível');
   }
 
   const dayStart = zonedTimeToUtc(date, 0);
@@ -174,7 +174,7 @@ async function findAppointmentOr404(id: string) {
   });
 
   if (!appointment) {
-    throw new AppError(404, 'Appointment not found');
+    throw new AppError(404, 'Agendamento não encontrado');
   }
 
   return appointment;
@@ -184,15 +184,15 @@ export async function cancelAppointment(id: string, userId: string, role: Role) 
   const appointment = await findAppointmentOr404(id);
 
   if (role !== Role.ADMIN && appointment.userId !== userId) {
-    throw new AppError(403, 'You can only cancel your own appointments');
+    throw new AppError(403, 'Você só pode cancelar os seus próprios agendamentos');
   }
 
   if (appointment.status === AppointmentStatus.CANCELLED) {
-    throw new AppError(409, 'Appointment is already cancelled');
+    throw new AppError(409, 'Este agendamento já foi cancelado');
   }
 
   if (appointment.status === AppointmentStatus.COMPLETED) {
-    throw new AppError(409, 'Completed appointments cannot be cancelled');
+    throw new AppError(409, 'Agendamentos concluídos não podem ser cancelados');
   }
 
   const updated = await prisma.appointment.update({

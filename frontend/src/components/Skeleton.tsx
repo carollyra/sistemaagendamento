@@ -3,7 +3,13 @@ import { Skeleton } from './ui/skeleton';
 export { Skeleton };
 
 /** Placeholder rows shaped like the cards used across the app. */
-export function SkeletonList({ rows = 3, label = 'Loading' }: { rows?: number; label?: string }) {
+export function SkeletonList({
+  rows = 3,
+  label = 'Carregando',
+}: {
+  rows?: number;
+  label?: string;
+}) {
   return (
     <div className="flex flex-col gap-4" role="status" aria-busy="true" aria-label={label}>
       {Array.from({ length: rows }).map((_, index) => (
@@ -25,7 +31,12 @@ export function SkeletonList({ rows = 3, label = 'Loading' }: { rows?: number; l
 
 export function SkeletonGrid({ items = 4 }: { items?: number }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2" role="status" aria-busy="true" aria-label="Loading">
+    <div
+      className="grid gap-4 sm:grid-cols-2"
+      role="status"
+      aria-busy="true"
+      aria-label="Carregando"
+    >
       {Array.from({ length: items }).map((_, index) => (
         <div key={index} className="surface flex flex-col gap-3 p-5">
           <Skeleton className="h-4 w-1/2" />
@@ -43,7 +54,7 @@ export function SkeletonSlots({ items = 12 }: { items?: number }) {
       className="grid grid-cols-3 gap-2.5 sm:grid-cols-5 lg:grid-cols-6"
       role="status"
       aria-busy="true"
-      aria-label="Loading times"
+      aria-label="Carregando horários"
     >
       {Array.from({ length: items }).map((_, index) => (
         <Skeleton key={index} className="h-11 rounded-xl" />
