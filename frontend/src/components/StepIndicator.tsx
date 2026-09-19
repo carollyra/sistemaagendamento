@@ -1,3 +1,5 @@
+import { Check } from 'lucide-react';
+
 interface StepIndicatorProps {
   steps: string[];
   current: number;
@@ -30,19 +32,7 @@ export function StepIndicator({ steps, current, onSelect }: StepIndicatorProps) 
                       : 'border-ink-600 bg-ink-850 text-mist-500'
                 }`}
               >
-                {isDone ? (
-                  <svg viewBox="0 0 24 24" fill="none" className="size-3.5" aria-hidden>
-                    <path
-                      d="m5 13 4 4L19 7"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                ) : (
-                  index + 1
-                )}
+                {isDone ? <Check className="size-3.5" aria-hidden /> : index + 1}
               </span>
               <span
                 className={`hidden text-sm transition sm:inline ${

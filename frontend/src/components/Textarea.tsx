@@ -1,4 +1,6 @@
 import { useId, type TextareaHTMLAttributes } from 'react';
+import { Textarea as UiTextarea } from './ui/input';
+import { Label } from './ui/label';
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label: string;
@@ -10,10 +12,8 @@ export function Textarea({ label, className = '', ...props }: TextareaProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="text-mist-300 text-xs font-medium tracking-wide uppercase">
-        {label}
-      </label>
-      <textarea {...props} id={id} className={`field resize-none ${className}`} />
+      <Label htmlFor={id}>{label}</Label>
+      <UiTextarea {...props} id={id} className={className} />
     </div>
   );
 }

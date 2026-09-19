@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Alert } from '../components/Alert';
+import { toast } from 'sonner';
 import { AuthLayout } from '../components/AuthLayout';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
@@ -15,19 +15,18 @@ export default function Login() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError('');
     setIsSubmitting(true);
 
     try {
       const user = await signIn({ email, password });
+      toast.success(`Welcome back, ${user.name.split(' ')[0]}`);
       navigate(user.role === 'ADMIN' ? '/admin' : redirectTo, { replace: true });
     } catch (submitError) {
-      setError(getErrorMessage(submitError, 'Could not sign in'));
+      toast.error(getErrorMessage(submitError, 'Could not sign in'));
     } finally {
       setIsSubmitting(false);
     }
@@ -50,8 +49,6 @@ export default function Login() {
       }
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        {error && <Alert tone="error">{error}</Alert>}
-
         <Input
           label="Email"
           type="email"

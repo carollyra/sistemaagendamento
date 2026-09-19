@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Alert } from '../components/Alert';
+import { toast } from 'sonner';
 import { AuthLayout } from '../components/AuthLayout';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
@@ -28,7 +28,6 @@ export default function Register() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState(initialState);
-  const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -58,7 +57,6 @@ export default function Register() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError('');
 
     if (!validate()) {
       return;
@@ -67,15 +65,16 @@ export default function Register() {
     setIsSubmitting(true);
 
     try {
-      await signUp({
+      const user = await signUp({
         name: form.name.trim(),
         email: form.email.trim(),
         password: form.password,
         phone: form.phone.trim() || undefined,
       });
+      toast.success(`Account created — welcome, ${user.name.split(' ')[0]}!`);
       navigate('/', { replace: true });
     } catch (submitError) {
-      setError(getErrorMessage(submitError, 'Could not create the account'));
+      toast.error(getErrorMessage(submitError, 'Could not create the account'));
     } finally {
       setIsSubmitting(false);
     }
@@ -98,8 +97,6 @@ export default function Register() {
       }
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        {error && <Alert tone="error">{error}</Alert>}
-
         <Input
           label="Full name"
           autoComplete="name"

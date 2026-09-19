@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Check } from 'lucide-react';
 import { Logo } from './Logo';
 
 interface AuthLayoutProps {
@@ -35,15 +36,7 @@ export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProp
             {highlights.map((item) => (
               <li key={item} className="text-mist-300 flex items-center gap-3 text-sm">
                 <span className="border-gold-500/30 bg-gold-500/10 text-gold-400 flex size-6 items-center justify-center rounded-full border">
-                  <svg viewBox="0 0 24 24" fill="none" className="size-3" aria-hidden>
-                    <path
-                      d="m5 13 4 4L19 7"
-                      stroke="currentColor"
-                      strokeWidth="2.4"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <Check className="size-3" aria-hidden />
                 </span>
                 {item}
               </li>

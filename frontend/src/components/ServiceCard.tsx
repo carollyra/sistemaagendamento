@@ -1,3 +1,4 @@
+import { Clock3 } from 'lucide-react';
 import type { Service } from '../types';
 import { formatDuration, formatPrice } from '../utils/format';
 
@@ -35,10 +36,7 @@ export function ServiceCard({ service, selected = false, onSelect }: ServiceCard
       )}
 
       <div className="text-mist-500 mt-1 flex items-center gap-2 text-xs">
-        <svg viewBox="0 0 24 24" fill="none" className="size-3.5" aria-hidden>
-          <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M12 7v5l3 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
+        <Clock3 className="size-3.5" aria-hidden />
         {formatDuration(service.durationMinutes)}
       </div>
     </button>
