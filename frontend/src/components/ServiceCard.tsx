@@ -13,18 +13,34 @@ export function ServiceCard({ service, selected = false, onSelect }: ServiceCard
       type="button"
       onClick={() => onSelect(service)}
       aria-pressed={selected}
-      className={`flex w-full flex-col items-start gap-1 rounded-xl border p-4 text-left transition ${
+      className={`group ease-smooth relative flex w-full flex-col gap-2 rounded-card border p-5 text-left transition duration-300 ${
         selected
-          ? 'border-amber-500 bg-amber-500/10'
-          : 'border-stone-800 bg-stone-900/60 hover:border-stone-600'
+          ? 'border-gold-500/60 bg-gold-500/8 shadow-gold'
+          : 'border-ink-700/70 bg-ink-850/70 shadow-soft hover:border-ink-500 hover:bg-ink-800/80'
       }`}
     >
-      <div className="flex w-full items-center justify-between gap-3">
-        <span className="font-medium text-stone-100">{service.name}</span>
-        <span className="text-sm font-semibold text-amber-400">{formatPrice(service.price)}</span>
+      <div className="flex items-start justify-between gap-4">
+        <h3 className="font-display text-base font-medium">{service.name}</h3>
+        <span
+          className={`shrink-0 text-sm font-semibold tabular-nums transition ${
+            selected ? 'text-gold-300' : 'text-gold-400/90'
+          }`}
+        >
+          {formatPrice(service.price)}
+        </span>
       </div>
-      {service.description && <p className="text-sm text-stone-400">{service.description}</p>}
-      <span className="text-xs text-stone-500">{formatDuration(service.durationMinutes)}</span>
+
+      {service.description && (
+        <p className="text-mist-400 text-sm leading-relaxed">{service.description}</p>
+      )}
+
+      <div className="text-mist-500 mt-1 flex items-center gap-2 text-xs">
+        <svg viewBox="0 0 24 24" fill="none" className="size-3.5" aria-hidden>
+          <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M12 7v5l3 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+        {formatDuration(service.durationMinutes)}
+      </div>
     </button>
   );
 }

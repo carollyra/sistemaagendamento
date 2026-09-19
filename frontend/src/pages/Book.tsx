@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Alert } from '../components/Alert';
 import { Button } from '../components/Button';
 import { ServiceCard } from '../components/ServiceCard';
-import { Spinner } from '../components/Spinner';
+import { SkeletonGrid, SkeletonSlots } from '../components/Skeleton';
 import { StepIndicator } from '../components/StepIndicator';
+import { Textarea } from '../components/Textarea';
 import { getErrorMessage } from '../services/api';
 import * as appointmentService from '../services/appointment.service';
 import type { AvailabilitySlot } from '../services/appointment.service';
@@ -99,27 +100,34 @@ export default function Book() {
     }
   }
 
+  const selectedDayLabel = dayOptions.find((day) => day.value === selectedDate)?.label;
+
   return (
-    <section className="flex flex-col gap-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">Book an appointment</h1>
-        <p className="mt-1 text-sm text-stone-400">
-          Choose a service, then a day, then one of the free times.
+    <section className="flex flex-col gap-10">
+      <header className="flex flex-col gap-3">
+        <p className="text-gold-500 text-xs font-medium tracking-[0.2em] uppercase">
+          New appointment
+        </p>
+        <h1 className="text-3xl font-semibold sm:text-4xl">Book your visit</h1>
+        <p className="text-mist-400 max-w-lg text-sm leading-relaxed">
+          Choose a service, then a day, then one of the free times. Confirmation is instant.
         </p>
       </header>
 
-      <StepIndicator steps={STEPS} current={step} onSelect={setStep} />
+      <div className="surface p-5 sm:p-6">
+        <StepIndicator steps={STEPS} current={step} onSelect={setStep} />
+      </div>
 
       {error && <Alert tone="error">{error}</Alert>}
 
       {step === 0 && (
-        <div className="flex flex-col gap-3">
+        <div className="animate-fade-up flex flex-col gap-4">
           {isLoadingServices ? (
-            <Spinner label="Loading services…" />
+            <SkeletonGrid />
           ) : services.length === 0 ? (
             <Alert>No services available right now.</Alert>
           ) : (
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               {services.map((service) => (
                 <ServiceCard
                   key={service.id}
@@ -134,22 +142,29 @@ export default function Book() {
       )}
 
       {step === 1 && selectedService && (
-        <div className="flex flex-col gap-4">
-          <p className="text-sm text-stone-400">
-            {selectedService.name} · {formatDuration(selectedService.durationMinutes)} ·{' '}
-            {formatPrice(selectedService.price)}
-          </p>
+        <div className="animate-fade-up flex flex-col gap-6">
+          <div className="border-ink-700/70 bg-ink-850/50 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border px-4 py-3 text-sm">
+            <span className="text-mist-100 font-medium">{selectedService.name}</span>
+            <span className="text-mist-600" aria-hidden>
+              ·
+            </span>
+            <span className="text-mist-400">{formatDuration(selectedService.durationMinutes)}</span>
+            <span className="text-mist-600" aria-hidden>
+              ·
+            </span>
+            <span className="text-gold-400 font-medium">{formatPrice(selectedService.price)}</span>
+          </div>
 
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-7">
+          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-5 lg:grid-cols-7">
             {dayOptions.map((day) => (
               <button
                 key={day.value}
                 type="button"
                 onClick={() => handleSelectDate(day.value)}
-                className={`rounded-lg border px-2 py-3 text-sm transition ${
+                className={`ease-smooth rounded-xl border px-2 py-3.5 text-sm transition duration-200 ${
                   selectedDate === day.value
-                    ? 'border-amber-500 bg-amber-500/10 text-amber-300'
-                    : 'border-stone-800 bg-stone-900/60 text-stone-300 hover:border-stone-600'
+                    ? 'border-gold-500/60 bg-gold-500/10 text-gold-300 shadow-gold'
+                    : 'border-ink-700/70 bg-ink-850/70 text-mist-300 hover:border-ink-500 hover:bg-ink-800/80'
                 }`}
               >
                 {day.label}
@@ -157,34 +172,38 @@ export default function Book() {
             ))}
           </div>
 
-          <Button variant="secondary" className="self-start" onClick={() => setStep(0)}>
-            Back to services
+          <Button variant="ghost" size="sm" className="self-start" onClick={() => setStep(0)}>
+            ‹ Back to services
           </Button>
         </div>
       )}
 
       {step === 2 && selectedService && selectedDate && (
-        <div className="flex flex-col gap-4">
-          <p className="text-sm text-stone-400">
-            {selectedService.name} ·{' '}
-            {dayOptions.find((day) => day.value === selectedDate)?.label ?? selectedDate}
-          </p>
+        <div className="animate-fade-up flex flex-col gap-6">
+          <div className="border-ink-700/70 bg-ink-850/50 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border px-4 py-3 text-sm">
+            <span className="text-mist-100 font-medium">{selectedService.name}</span>
+            <span className="text-mist-600" aria-hidden>
+              ·
+            </span>
+            <span className="text-mist-400">{selectedDayLabel ?? selectedDate}</span>
+          </div>
 
           {isLoadingSlots ? (
-            <Spinner label="Loading times…" />
+            <SkeletonSlots />
           ) : slots.length === 0 ? (
             <Alert>No free times for this day. Pick another date.</Alert>
           ) : (
-            <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-6">
+            <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-5 lg:grid-cols-6">
               {slots.map((slot) => (
                 <button
                   key={slot.startsAt}
                   type="button"
                   onClick={() => setSelectedSlot(slot)}
-                  className={`rounded-lg border px-2 py-2.5 text-sm transition ${
+                  aria-pressed={selectedSlot?.startsAt === slot.startsAt}
+                  className={`ease-smooth rounded-xl border py-3 text-sm tabular-nums transition duration-200 ${
                     selectedSlot?.startsAt === slot.startsAt
-                      ? 'border-amber-500 bg-amber-500/10 text-amber-300'
-                      : 'border-stone-800 bg-stone-900/60 text-stone-300 hover:border-stone-600'
+                      ? 'border-gold-500/60 bg-gold-500/10 text-gold-300 shadow-gold'
+                      : 'border-ink-700/70 bg-ink-850/70 text-mist-300 hover:border-ink-500 hover:bg-ink-800/80'
                   }`}
                 >
                   {formatTime(slot.startsAt)}
@@ -193,25 +212,35 @@ export default function Book() {
             </div>
           )}
 
-          <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-stone-300">Notes (optional)</span>
-            <textarea
-              value={notes}
-              onChange={(event) => setNotes(event.target.value)}
-              rows={3}
-              maxLength={500}
-              placeholder="Anything the barber should know?"
-              className="rounded-lg border border-stone-700 bg-stone-900 px-3 py-2.5 text-sm text-stone-100 placeholder:text-stone-500 focus:border-amber-500 focus:outline-none"
-            />
-          </label>
+          <Textarea
+            label="Notes (optional)"
+            value={notes}
+            onChange={(event) => setNotes(event.target.value)}
+            rows={3}
+            maxLength={500}
+            placeholder="Anything the barber should know?"
+          />
 
-          <div className="flex flex-wrap gap-3">
-            <Button onClick={handleConfirm} isLoading={isSubmitting} disabled={!selectedSlot}>
-              {selectedSlot ? `Confirm ${formatTime(selectedSlot.startsAt)}` : 'Select a time'}
-            </Button>
-            <Button variant="secondary" onClick={() => setStep(1)}>
-              Change date
-            </Button>
+          <div className="border-ink-700/70 bg-ink-850/50 flex flex-col gap-4 rounded-xl border p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-sm">
+              <p className="text-mist-400">
+                {selectedSlot ? 'You are booking' : 'Select a time to continue'}
+              </p>
+              {selectedSlot && (
+                <p className="font-display text-mist-100 mt-1 text-lg font-medium">
+                  {selectedDayLabel ?? selectedDate} at {formatTime(selectedSlot.startsAt)}
+                </p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2.5 sm:flex-row">
+              <Button variant="secondary" onClick={() => setStep(1)}>
+                Change date
+              </Button>
+              <Button onClick={handleConfirm} isLoading={isSubmitting} disabled={!selectedSlot}>
+                Confirm booking
+              </Button>
+            </div>
           </div>
         </div>
       )}
