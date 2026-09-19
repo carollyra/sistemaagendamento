@@ -10,6 +10,7 @@ import type { ServiceFormValues } from '../../components/admin/ServiceForm';
 import { ServiceFormDialog } from '../../components/admin/ServiceFormDialog';
 import { Badge } from '../../components/ui/badge';
 import { useAdminServices } from '../../hooks/useAdminServices';
+import { serviceImage } from '../../lib/images';
 import { staggerContainer, staggerItem } from '../../lib/motion';
 import { getErrorMessage } from '../../services/api';
 import * as serviceService from '../../services/service.service';
@@ -153,10 +154,15 @@ export function AdminServices() {
                   service.active ? '' : 'opacity-65'
                 }`}
               >
-                <div className="flex items-start gap-4">
-                  <span className="border-ink-700 bg-ink-900/80 text-gold-400 font-display flex h-14 min-w-24 shrink-0 items-center justify-center rounded-xl border px-3 text-sm font-semibold tabular-nums">
-                    {formatPrice(service.price)}
-                  </span>
+                <div className="flex items-center gap-4">
+                  <div className="relative size-16 shrink-0 overflow-hidden rounded-xl">
+                    <img
+                      src={serviceImage(service.name, { width: 200, height: 200 })}
+                      alt=""
+                      loading="lazy"
+                      className="size-full object-cover"
+                    />
+                  </div>
 
                   <div className="flex flex-col gap-1.5">
                     <div className="flex flex-wrap items-center gap-2.5">
@@ -166,8 +172,12 @@ export function AdminServices() {
                     {service.description && (
                       <p className="text-mist-400 text-sm leading-relaxed">{service.description}</p>
                     )}
-                    <p className="text-mist-500 text-xs">
+                    <p className="text-mist-500 flex items-center gap-2 text-xs">
                       {formatDuration(service.durationMinutes)}
+                      <span aria-hidden>·</span>
+                      <span className="text-gold-400 font-display text-sm font-bold tabular-nums">
+                        {formatPrice(service.price)}
+                      </span>
                     </p>
                   </div>
                 </div>

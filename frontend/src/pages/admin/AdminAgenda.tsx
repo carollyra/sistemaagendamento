@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
@@ -14,12 +14,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../components/ui/select';
+import { DateStrip } from '../../components/DateStrip';
 import { useDayAgenda } from '../../hooks/useDayAgenda';
 import { staggerContainer, staggerItem } from '../../lib/motion';
 import { getErrorMessage } from '../../services/api';
 import * as appointmentService from '../../services/appointment.service';
 import type { Appointment } from '../../types';
-import { addDays, formatLongDate, formatPrice, todayISO } from '../../utils/format';
+import {
+  addDays,
+  buildDayOptions,
+  formatLongDate,
+  formatPrice,
+  todayISO,
+} from '../../utils/format';
 
 const QUICK_JUMPS = [
   { value: '0', label: 'Hoje' },
@@ -30,6 +37,7 @@ const QUICK_JUMPS = [
 
 export function AdminAgenda() {
   const [date, setDate] = useState(() => todayISO());
+  const dayOptions = useMemo(() => buildDayOptions(14), []);
   const { appointments, isLoading, error, refresh } = useDayAgenda(date);
   const [busyId, setBusyId] = useState<string | null>(null);
 
@@ -107,6 +115,10 @@ export function AdminAgenda() {
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      <div className="surface p-5">
+        <DateStrip days={dayOptions} selected={date} onSelect={setDate} />
       </div>
 
       <dl className="grid gap-4 sm:grid-cols-3">

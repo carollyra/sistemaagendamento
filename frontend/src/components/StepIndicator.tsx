@@ -26,9 +26,9 @@ export function StepIndicator({ steps, current, onSelect }: StepIndicatorProps) 
               <span
                 className={`flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold transition duration-300 ${
                   isCurrent
-                    ? 'border-gold-500 bg-gold-500 text-ink-950 shadow-gold'
+                    ? 'border-gold-500 bg-gold-500 text-ink-950'
                     : isDone
-                      ? 'border-gold-500/40 bg-gold-500/10 text-gold-300'
+                      ? 'border-gold-500/40 bg-gold-500/15 text-gold-300'
                       : 'border-ink-600 bg-ink-850 text-mist-500'
                 }`}
               >

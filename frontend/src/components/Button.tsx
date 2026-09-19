@@ -1,23 +1,21 @@
 import type { ButtonHTMLAttributes } from 'react';
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'link';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'light' | 'link';
 type Size = 'sm' | 'md' | 'lg';
 
 const variants: Record<Variant, string> = {
-  primary:
-    'bg-gradient-to-b from-gold-400 to-gold-500 text-ink-950 shadow-gold hover:from-gold-300 hover:to-gold-400 active:translate-y-px',
-  secondary:
-    'border border-ink-600 bg-ink-800/80 text-mist-100 hover:border-ink-500 hover:bg-ink-700/80 active:translate-y-px',
-  ghost: 'text-mist-300 hover:bg-ink-800/70 hover:text-mist-100',
-  danger:
-    'border border-red-500/30 bg-red-500/10 text-red-200 hover:border-red-500/50 hover:bg-red-500/20',
+  primary: 'bg-gold-500 text-ink-950 hover:bg-gold-400 active:bg-gold-600',
+  secondary: 'border border-ink-600 bg-ink-800 text-mist-100 hover:bg-ink-700 active:bg-ink-600',
+  ghost: 'text-mist-300 hover:bg-ink-800 hover:text-mist-100',
+  danger: 'border border-red-500/30 bg-red-500/10 text-red-200 hover:bg-red-500/20',
+  light: 'bg-mist-100 text-ink-950 hover:bg-white',
   link: 'text-gold-400 hover:text-gold-300 underline-offset-4 hover:underline px-0 py-0',
 };
 
 const sizes: Record<Size, string> = {
-  sm: 'px-3 py-1.5 text-xs',
-  md: 'px-4 py-2.5 text-sm',
-  lg: 'px-6 py-3.5 text-sm',
+  sm: 'h-9 px-3.5 text-xs',
+  md: 'h-11 px-5 text-sm',
+  lg: 'h-13 px-7 text-[15px]',
 };
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -41,7 +39,7 @@ export function Button({
     <button
       {...props}
       disabled={disabled || isLoading}
-      className={`ease-smooth inline-flex items-center justify-center gap-2 rounded-xl font-medium tracking-tight whitespace-nowrap transition duration-200 disabled:pointer-events-none disabled:opacity-50 ${
+      className={`ease-smooth inline-flex items-center justify-center gap-2 rounded-full font-medium tracking-tight whitespace-nowrap transition-colors duration-200 disabled:pointer-events-none disabled:opacity-50 ${
         variant === 'link' ? '' : sizes[size]
       } ${variants[variant]} ${fullWidth ? 'w-full' : ''} ${className}`}
     >

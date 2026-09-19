@@ -137,11 +137,17 @@ The frontend ships with a small, self-contained design system in
 
 - **Palette** — deep blue-tinted neutrals (`ink-*`), muted text greys (`mist-*`)
   and a single accent, a refined gold (`gold-*`).
-- **Typography** — Sora for headings (`font-display`), Inter for body text.
+- **Typography** — Bricolage Grotesque for headings (`font-display`, negative
+  tracking, heavy weights), Inter for body text.
 - **Surfaces** — `.surface` / `.surface-hover` for layered cards, `.field` for
   inputs, `.aurora` for the soft background glow.
 - **Motion** — `animate-fade-up`, `animate-fade-in`, `animate-scale-in` and a
   shimmer used by the skeleton loaders.
+- **Photography** — curated Unsplash images served straight from the CDN
+  (`frontend/src/lib/images.ts`, no API key). Text over photos always sits on a
+  `.photo-scrim` gradient.
+- **Dense pickers** — `DateStrip` (scrollable day selector) and `TimePills`
+  (scrollable time slots), both with a filled state in the accent colour.
 
 ## UI toolkit
 
@@ -181,3 +187,4 @@ The frontend ships with a small, self-contained design system in
 - [x] 9. Visual redesign: design system, typography and polished UI
 - [x] 10. shadcn/ui primitives, toasts and motion
 - [x] 11. Brazilian Portuguese interface and "Fade Barbearia" branding
+- [x] 12. Premium visual pass: photography, denser pickers, new type pairing

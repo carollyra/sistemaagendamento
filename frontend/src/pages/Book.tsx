@@ -1,24 +1,71 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, CalendarCheck, Clock3, RotateCcw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Alert } from '../components/Alert';
 import { Button } from '../components/Button';
+import { DateStrip } from '../components/DateStrip';
 import { ServiceCard } from '../components/ServiceCard';
 import { SkeletonGrid, SkeletonSlots } from '../components/Skeleton';
 import { StepIndicator } from '../components/StepIndicator';
 import { Textarea } from '../components/Textarea';
+import { TimePills } from '../components/TimePills';
+import { serviceImage } from '../lib/images';
 import { staggerContainer, staggerItem, stepVariants } from '../lib/motion';
 import { getErrorMessage } from '../services/api';
 import * as appointmentService from '../services/appointment.service';
 import type { AvailabilitySlot } from '../services/appointment.service';
 import * as serviceService from '../services/service.service';
 import type { Service } from '../types';
-import { buildDayOptions, formatDuration, formatPrice, formatTime } from '../utils/format';
+import {
+  buildDayOptions,
+  formatDuration,
+  formatMonthTitle,
+  formatPrice,
+  formatTime,
+} from '../utils/format';
 
 const STEPS = ['Serviço', 'Data', 'Horário'];
+
+const BOOKING_NOTES = [
+  {
+    icon: Clock3,
+    title: 'Duração real',
+    text: 'Cada serviço reserva o tempo que realmente leva na cadeira.',
+  },
+  {
+    icon: CalendarCheck,
+    title: 'Confirmação na hora',
+    text: 'Sem espera por retorno: o horário é seu assim que você confirma.',
+  },
+  {
+    icon: RotateCcw,
+    title: 'Cancelou, liberou',
+    text: 'Cancelar é livre e devolve o horário para a agenda na hora.',
+  },
+];
 const DAYS_AHEAD = 21;
+
+/** Compact reminder of the service picked in step one. */
+function SelectionSummary({ service }: { service: Service }) {
+  return (
+    <div className="border-ink-700/70 bg-ink-850 flex items-center gap-3 rounded-2xl border p-3">
+      <img
+        src={serviceImage(service.name, { width: 200, height: 200 })}
+        alt=""
+        loading="lazy"
+        className="size-12 rounded-xl object-cover"
+      />
+      <div className="min-w-0">
+        <p className="font-display truncate text-sm font-bold tracking-tight">{service.name}</p>
+        <p className="text-mist-500 text-xs">
+          {formatDuration(service.durationMinutes)} · {formatPrice(service.price)}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export default function Book() {
   const navigate = useNavigate();
@@ -158,7 +205,7 @@ export default function Book() {
                 <Alert>Nenhum serviço disponível no momento.</Alert>
               ) : (
                 <motion.div
-                  className="grid gap-4 sm:grid-cols-2"
+                  className="grid gap-3 sm:grid-cols-2"
                   variants={staggerContainer}
                   initial="hidden"
                   animate="visible"
@@ -179,6 +226,20 @@ export default function Book() {
                   ))}
                 </motion.div>
               )}
+
+              <ul className="grid gap-3 sm:grid-cols-3">
+                {BOOKING_NOTES.map((note) => (
+                  <li key={note.title} className="surface flex items-start gap-3 p-4">
+                    <span className="border-gold-500/30 bg-gold-500/10 text-gold-400 flex size-9 shrink-0 items-center justify-center rounded-xl border">
+                      <note.icon className="size-4" aria-hidden />
+                    </span>
+                    <div>
+                      <p className="font-display text-sm font-bold tracking-tight">{note.title}</p>
+                      <p className="text-mist-400 mt-1 text-xs leading-relaxed">{note.text}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </motion.div>
           )}
 
@@ -192,45 +253,18 @@ export default function Book() {
               exit="exit"
               className="flex flex-col gap-6"
             >
-              <div className="border-ink-700/70 bg-ink-850/50 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border px-4 py-3 text-sm">
-                <span className="text-mist-100 font-medium">{selectedService.name}</span>
-                <span className="text-mist-500" aria-hidden>
-                  ·
-                </span>
-                <span className="text-mist-400">
-                  {formatDuration(selectedService.durationMinutes)}
-                </span>
-                <span className="text-mist-500" aria-hidden>
-                  ·
-                </span>
-                <span className="text-gold-400 font-medium">
-                  {formatPrice(selectedService.price)}
-                </span>
-              </div>
+              <SelectionSummary service={selectedService} />
 
-              <motion.div
-                className="grid grid-cols-3 gap-2.5 sm:grid-cols-5 lg:grid-cols-7"
-                variants={staggerContainer}
-                initial="hidden"
-                animate="visible"
-              >
-                {dayOptions.map((day) => (
-                  <motion.button
-                    key={day.value}
-                    type="button"
-                    variants={staggerItem}
-                    whileHover={{ y: -2 }}
-                    onClick={() => handleSelectDate(day.value)}
-                    className={`ease-smooth rounded-xl border px-2 py-3.5 text-sm transition-colors duration-200 ${
-                      selectedDate === day.value
-                        ? 'border-gold-500/60 bg-gold-500/10 text-gold-300 shadow-gold'
-                        : 'border-ink-700/70 bg-ink-850/70 text-mist-300 hover:border-ink-500 hover:bg-ink-800/80'
-                    }`}
-                  >
-                    {day.label}
-                  </motion.button>
-                ))}
-              </motion.div>
+              <div className="surface flex flex-col gap-4 p-5">
+                <div className="flex items-center justify-between">
+                  <h2 className="font-display text-base font-bold tracking-tight">
+                    {formatMonthTitle(dayOptions[0].value)}
+                  </h2>
+                  <span className="text-mist-500 text-xs">Próximos {DAYS_AHEAD} dias</span>
+                </div>
+
+                <DateStrip days={dayOptions} selected={selectedDate} onSelect={handleSelectDate} />
+              </div>
 
               <Button variant="ghost" size="sm" className="self-start" onClick={() => goToStep(0)}>
                 <ArrowLeft className="size-4" aria-hidden />
@@ -249,67 +283,82 @@ export default function Book() {
               exit="exit"
               className="flex flex-col gap-6"
             >
-              <div className="border-ink-700/70 bg-ink-850/50 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border px-4 py-3 text-sm">
-                <span className="text-mist-100 font-medium">{selectedService.name}</span>
-                <span className="text-mist-500" aria-hidden>
-                  ·
-                </span>
-                <span className="text-mist-400">{selectedDayLabel ?? selectedDate}</span>
+              <SelectionSummary service={selectedService} />
+
+              <div className="surface flex flex-col gap-4 p-5">
+                <div className="flex items-center justify-between">
+                  <h2 className="font-display text-base font-bold tracking-tight">
+                    {formatMonthTitle(selectedDate)}
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => goToStep(1)}
+                    className="text-mist-400 hover:text-gold-300 text-xs transition"
+                  >
+                    Ver todos os dias
+                  </button>
+                </div>
+
+                <DateStrip
+                  days={dayOptions}
+                  selected={selectedDate}
+                  onSelect={(date) => {
+                    setSelectedDate(date);
+                    setSelectedSlot(null);
+                    void loadSlots(selectedService.id, date);
+                  }}
+                />
               </div>
 
-              {isLoadingSlots ? (
-                <SkeletonSlots />
-              ) : slots.length === 0 ? (
-                <Alert>Nenhum horário livre neste dia. Escolha outra data.</Alert>
-              ) : (
-                <motion.div
-                  className="grid grid-cols-3 gap-2.5 sm:grid-cols-5 lg:grid-cols-6"
-                  variants={staggerContainer}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  {slots.map((slot) => (
-                    <motion.button
-                      key={slot.startsAt}
-                      type="button"
-                      variants={staggerItem}
-                      whileHover={{ y: -2 }}
-                      onClick={() => setSelectedSlot(slot)}
-                      aria-pressed={selectedSlot?.startsAt === slot.startsAt}
-                      className={`ease-smooth rounded-xl border py-3 text-sm tabular-nums transition-colors duration-200 ${
-                        selectedSlot?.startsAt === slot.startsAt
-                          ? 'border-gold-500/60 bg-gold-500/10 text-gold-300 shadow-gold'
-                          : 'border-ink-700/70 bg-ink-850/70 text-mist-300 hover:border-ink-500 hover:bg-ink-800/80'
-                      }`}
-                    >
-                      {formatTime(slot.startsAt)}
-                    </motion.button>
-                  ))}
-                </motion.div>
-              )}
+              <div className="surface flex flex-col gap-4 p-5">
+                <div className="flex items-center justify-between">
+                  <h2 className="font-display text-base font-bold tracking-tight">Horários</h2>
+                  {!isLoadingSlots && slots.length > 0 && (
+                    <span className="text-mist-500 text-xs">{slots.length} livres</span>
+                  )}
+                </div>
 
-              <Textarea
-                label="Observações (opcional)"
-                value={notes}
-                onChange={(event) => setNotes(event.target.value)}
-                rows={3}
-                maxLength={500}
-                placeholder="Algo que o barbeiro precisa saber?"
-              />
+                {isLoadingSlots ? (
+                  <SkeletonSlots />
+                ) : slots.length === 0 ? (
+                  <Alert>Nenhum horário livre neste dia. Escolha outra data.</Alert>
+                ) : (
+                  <TimePills
+                    slots={slots}
+                    selected={selectedSlot?.startsAt}
+                    onSelect={(startsAt) =>
+                      setSelectedSlot(slots.find((slot) => slot.startsAt === startsAt) ?? null)
+                    }
+                    wrap
+                  />
+                )}
+              </div>
 
-              <div className="border-ink-700/70 bg-ink-850/50 flex flex-col gap-4 rounded-xl border p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="surface p-5">
+                <Textarea
+                  label="Observações (opcional)"
+                  value={notes}
+                  onChange={(event) => setNotes(event.target.value)}
+                  rows={3}
+                  maxLength={500}
+                  placeholder="Algo que o barbeiro precisa saber?"
+                />
+              </div>
+
+              <div className="border-ink-700/70 bg-ink-850 flex flex-col gap-4 rounded-2xl border p-5 sm:flex-row sm:items-center sm:justify-between">
                 <div className="text-sm">
                   <p className="text-mist-400">
                     {selectedSlot ? 'Você vai agendar' : 'Selecione um horário para continuar'}
                   </p>
                   {selectedSlot && (
-                    <p className="font-display text-mist-100 mt-1 text-lg font-medium">
-                      {selectedDayLabel ?? selectedDate} às {formatTime(selectedSlot.startsAt)}
+                    <p className="font-display text-mist-100 mt-1 text-lg font-bold tracking-tight">
+                      {selectedDayLabel ?? selectedDate} às {formatTime(selectedSlot.startsAt)} ·{' '}
+                      {formatPrice(selectedService.price)}
                     </p>
                   )}
                 </div>
 
-                <div className="flex flex-col gap-2.5 sm:flex-row">
+                <div className="flex gap-2.5">
                   <Button variant="secondary" onClick={() => goToStep(1)}>
                     Trocar a data
                   </Button>

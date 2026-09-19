@@ -9,6 +9,9 @@ import { Button } from '../components/Button';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { SkeletonList } from '../components/Skeleton';
 import { useMyAppointments } from '../hooks/useMyAppointments';
+import { usePublicServices } from '../hooks/usePublicServices';
+import { images, serviceImage } from '../lib/images';
+import { formatDuration, formatPrice } from '../utils/format';
 import { staggerContainer, staggerItem } from '../lib/motion';
 import { getErrorMessage } from '../services/api';
 import * as appointmentService from '../services/appointment.service';
@@ -16,6 +19,7 @@ import type { Appointment } from '../types';
 
 export default function MyAppointments() {
   const { appointments, isLoading, error, loadedAt, refresh } = useMyAppointments();
+  const { services } = usePublicServices();
   const [toCancel, setToCancel] = useState<Appointment | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
@@ -55,23 +59,32 @@ export default function MyAppointments() {
 
   return (
     <section className="flex flex-col gap-10">
-      <header className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-        <div className="flex flex-col gap-3">
-          <p className="text-gold-500 text-xs font-medium tracking-[0.2em] uppercase">
-            Sua cadeira
-          </p>
-          <h1 className="text-3xl font-semibold sm:text-4xl">Meus agendamentos</h1>
-          <p className="text-mist-400 max-w-lg text-sm leading-relaxed">
-            Seus próximos horários e tudo o que você já agendou.
-          </p>
-        </div>
+      <header className="rounded-panel relative overflow-hidden">
+        <img
+          src={images.styling({ width: 1400, height: 500 })}
+          alt=""
+          className="absolute inset-0 size-full object-cover"
+        />
+        <div className="photo-scrim absolute inset-0" aria-hidden />
 
-        <Link to="/book">
-          <Button size="lg">
-            <CalendarPlus className="size-4" aria-hidden />
-            Novo agendamento
-          </Button>
-        </Link>
+        <div className="relative flex flex-col gap-5 p-6 pt-24 sm:flex-row sm:items-end sm:justify-between sm:p-8 sm:pt-32">
+          <div className="flex flex-col gap-2">
+            <p className="text-gold-400 text-xs font-medium tracking-[0.2em] uppercase">
+              Sua cadeira
+            </p>
+            <h1 className="text-3xl font-extrabold text-white sm:text-4xl">Meus agendamentos</h1>
+            <p className="text-mist-200 max-w-lg text-sm leading-relaxed">
+              Seus próximos horários e tudo o que você já agendou.
+            </p>
+          </div>
+
+          <Link to="/book">
+            <Button size="lg">
+              <CalendarPlus className="size-4" aria-hidden />
+              Novo agendamento
+            </Button>
+          </Link>
+        </div>
       </header>
 
       {error && <Alert tone="error">{error}</Alert>}
@@ -167,6 +180,53 @@ export default function MyAppointments() {
             </div>
           )}
         </>
+      )}
+
+      {/* Quick way back into the booking flow */}
+      {services.length > 0 && (
+        <section className="flex flex-col gap-4">
+          <div className="flex items-center gap-4">
+            <h2 className="text-mist-300 text-xs font-medium tracking-[0.2em] uppercase">
+              Agende de novo
+            </h2>
+            <span className="bg-ink-700 h-px flex-1" aria-hidden />
+          </div>
+
+          <motion.ul
+            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
+            {services.map((service) => (
+              <motion.li key={service.id} variants={staggerItem} whileHover={{ y: -4 }}>
+                <Link
+                  to="/book"
+                  className="group rounded-media border-ink-700/70 bg-ink-850 hover:border-ink-500 ease-smooth flex h-full flex-col overflow-hidden border transition-colors duration-300"
+                >
+                  <div className="relative h-24 overflow-hidden">
+                    <img
+                      src={serviceImage(service.name, { width: 400, height: 260 })}
+                      alt=""
+                      loading="lazy"
+                      className="ease-smooth size-full object-cover transition duration-500 group-hover:scale-105"
+                    />
+                    <div className="photo-scrim absolute inset-0 opacity-80" aria-hidden />
+                    <p className="font-display absolute right-3 bottom-2 left-3 truncate text-sm font-bold tracking-tight text-white">
+                      {service.name}
+                    </p>
+                  </div>
+                  <div className="text-mist-500 flex items-center justify-between px-3 py-2.5 text-xs">
+                    {formatDuration(service.durationMinutes)}
+                    <span className="text-gold-400 font-display text-sm font-bold tabular-nums">
+                      {formatPrice(service.price)}
+                    </span>
+                  </div>
+                </Link>
+              </motion.li>
+            ))}
+          </motion.ul>
+        </section>
       )}
 
       <ConfirmDialog

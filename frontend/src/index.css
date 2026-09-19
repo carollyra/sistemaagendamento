@@ -2,7 +2,7 @@
 
 @theme {
   /* Typography */
-  --font-display: 'Sora', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Bricolage Grotesque', 'Sora', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 
   /* Deep, slightly blue-tinted neutrals */
@@ -28,12 +28,13 @@
   --color-gold-600: #b08a44;
   --color-gold-700: #8a6b32;
 
-  --radius-card: 1rem;
-  --radius-panel: 1.5rem;
+  --radius-card: 1.25rem;
+  --radius-panel: 1.75rem;
+  --radius-media: 1.5rem;
 
   --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -16px rgb(0 0 0 / 0.8);
   --shadow-panel: 0 24px 70px -32px rgb(0 0 0 / 0.9);
-  --shadow-gold: 0 10px 30px -12px rgb(207 168 94 / 0.35);
+  --shadow-lift: 0 18px 40px -24px rgb(0 0 0 / 0.9);
 
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -120,7 +121,8 @@
   h2,
   h3,
   h4 {
-    @apply text-mist-100 font-display tracking-tight;
+    @apply text-mist-100 font-display tracking-[-0.03em];
+    font-weight: 700;
   }
 
   ::selection {
@@ -195,6 +197,36 @@
 
   .anim-content {
     @apply data-[state=closed]:animate-scale-out data-[state=open]:animate-scale-in;
+  }
+
+  /* Horizontal pickers: scrollable, no visible scrollbar. */
+  .scroll-row {
+    @apply -mx-1 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-1 pb-1;
+    scrollbar-width: none;
+  }
+
+  .scroll-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Readable text over photography. */
+  .photo-scrim {
+    background-image: linear-gradient(
+      to top,
+      rgb(5 7 12 / 0.95) 0%,
+      rgb(5 7 12 / 0.75) 35%,
+      rgb(5 7 12 / 0.25) 70%,
+      rgb(5 7 12 / 0.1) 100%
+    );
+  }
+
+  .photo-scrim-side {
+    background-image: linear-gradient(
+      to right,
+      rgb(5 7 12 / 0.92) 0%,
+      rgb(5 7 12 / 0.6) 45%,
+      rgb(5 7 12 / 0.2) 100%
+    );
   }
 
   .text-gradient {
