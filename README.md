@@ -1,213 +1,260 @@
-# Fade Barbearia — Scheduling System
+# Fade Barbearia
 
-Full stack appointment scheduling system for a barbershop.
-The interface and the API messages are in Brazilian Portuguese; the codebase
-(identifiers, routes, database fields) stays in English.
+Sistema de agendamento online para barbearia. O cliente escolhe o serviço, o dia e um dos horários livres; a barbearia acompanha a agenda do dia e mantém o catálogo de serviços atualizado. A disponibilidade é calculada em tempo real a partir da duração de cada serviço e dos agendamentos já existentes, então o mesmo horário nunca é vendido duas vezes.
+
+**Acesse:** https://sistemaagendamento-smoky.vercel.app
+
+> ⏳ A API está hospedada no plano gratuito do Render, que hiberna depois de um tempo sem uso. O primeiro acesso pode levar até 50 segundos enquanto o servidor acorda — os seguintes são instantâneos.
+
+**Demonstração como administrador:**
+
+| E-mail | Senha |
+| --- | --- |
+| `admin@barbershop.com` | `admin123` |
+
+Para ver a experiência do cliente, basta criar uma conta pela tela de cadastro.
+
+---
+
+## Sumário
+
+- [Stack](#stack)
+- [Funcionalidades](#funcionalidades)
+- [Decisões técnicas](#decisões-técnicas)
+- [Estrutura de pastas](#estrutura-de-pastas)
+- [Rodando localmente](#rodando-localmente)
+- [Variáveis de ambiente](#variáveis-de-ambiente)
+- [Endpoints da API](#endpoints-da-api)
+- [Autora](#autora)
+
+---
 
 ## Stack
 
-| Layer    | Tech                                              |
-| -------- | ------------------------------------------------- |
-| Frontend | React + TypeScript, Vite, Tailwind CSS            |
-| Backend  | Node.js + TypeScript, Express                     |
-| Database | PostgreSQL (Neon) with Prisma ORM                 |
-| Auth     | JWT + bcrypt                                      |
+**Frontend**
 
-## Structure
+- React 19 com TypeScript
+- Vite
+- Tailwind CSS 4
+- React Router
+- Axios
+- shadcn/ui sobre Radix UI (diálogos, select, badge, skeleton)
+- Framer Motion (transições e micro-interações)
+- Sonner (notificações) e Lucide (ícones)
+
+**Backend**
+
+- Node.js com TypeScript
+- Express 5
+- Prisma ORM 7
+- Zod (validação de entrada)
+- JSON Web Token e bcrypt (autenticação)
+
+**Infraestrutura**
+
+- PostgreSQL no Neon
+- API no Render
+- Frontend na Vercel
+
+---
+
+## Funcionalidades
+
+### Cliente
+
+- Cadastro e login com sessão persistida no navegador
+- Catálogo de serviços com foto, duração, preço e quantidade de horários livres
+- Agendamento em três passos: serviço → data → horário
+- Apenas horários realmente livres aparecem na lista, já descontando a duração do serviço
+- Observações opcionais para o barbeiro
+- Página "Meus agendamentos" separando próximos e histórico
+- Cancelamento com confirmação, devolvendo o horário para a agenda na hora
+
+### Administrador
+
+- Agenda do dia com navegação por data, nome e telefone do cliente
+- Indicadores do dia: agendados, total e receita prevista
+- Visão dos próximos sete dias com a carga de cada dia
+- Marcar atendimento como concluído ou cancelar
+- CRUD de serviços: criar, editar, ativar/desativar e excluir
+- Serviços inativos somem para o cliente, mas continuam no catálogo interno
+
+---
+
+## Decisões técnicas
+
+### Nenhum horário vendido duas vezes
+
+A checagem não é "existe agendamento começando nesse horário?", e sim uma comparação de intervalos: dois agendamentos conflitam quando `inicioExistente < fimNovo` **e** `fimExistente > inicioNovo`. Isso cobre o caso em que um corte de 50 minutos engole o horário seguinte.
+
+A verificação e a criação acontecem dentro da mesma transação, com `isolationLevel: 'Serializable'`. Sem isso, dois clientes clicando ao mesmo tempo poderiam passar os dois pela checagem antes de qualquer gravação. Se o horário já estiver ocupado, a API responde `409` e o frontend recarrega a lista de horários.
+
+### Datas em UTC, conversão só na exibição
+
+O banco guarda `startsAt` e `endsAt` em UTC. A conversão para o fuso da barbearia (`BUSINESS_TIMEZONE`) acontece na hora de montar os horários disponíveis e de exibir na tela, usando a API `Intl` — sem depender do relógio de quem está acessando. Assim um cliente viajando não vê horários deslocados, e o horário de verão não quebra a agenda.
+
+### Soft delete de serviços
+
+Excluir um serviço que já tem agendamentos apagaria o histórico junto. Por isso, o `DELETE /services/:id` verifica se existe algum agendamento ligado ao serviço: se existir, ele é apenas desativado (`active: false`) e some para os clientes; se não existir, é removido de fato. O histórico continua íntegro e o admin recebe a informação do que aconteceu.
+
+### Regras de negócio no servidor
+
+Horário de funcionamento, dias de trabalho, duração do slot, cálculo do fim do atendimento e validação de conflito ficam no backend. O frontend nunca envia `endsAt` nem decide se um horário é válido — ele só envia o serviço e o início escolhido. Isso mantém a regra em um lugar só e impede que uma requisição feita fora da interface burle a agenda.
+
+### Autenticação com JWT e bcrypt
+
+As senhas são gravadas com hash bcrypt (nunca em texto puro). O login devolve um JWT assinado com `sub`, `email` e `role`, guardado no `localStorage` e enviado no header `Authorization`. No backend, o middleware `authenticate` valida o token e o `requireAdmin` protege as rotas administrativas — o papel vem do token, não do que o cliente diz ser.
+
+### Validação com Zod
+
+Todo corpo, query e parâmetro de rota passa por um schema Zod antes de chegar ao controller. Erros de validação voltam como `400` com a mensagem de cada campo, em português, e os tipos do TypeScript são inferidos dos próprios schemas, sem duplicar definição.
+
+---
+
+## Estrutura de pastas
 
 ```
 .
-├── backend/          # Express API
-│   ├── prisma/       # Prisma schema and migrations
+├── backend/
+│   ├── prisma/
+│   │   ├── migrations/         # histórico de migrações
+│   │   ├── schema.prisma       # User, Service, Appointment
+│   │   └── seed.ts             # admin + serviços iniciais
 │   └── src/
-│       ├── config/
-│       ├── controllers/
-│       ├── middlewares/
-│       ├── routes/
-│       └── services/
-├── frontend/         # React app
-│   └── src/
-│       ├── components/
-│       ├── contexts/
-│       ├── hooks/
-│       ├── pages/
-│       └── services/
-└── README.md
+│       ├── config/             # env, CORS, Prisma, horário de funcionamento
+│       ├── controllers/        # entrada e saída HTTP
+│       ├── middlewares/        # autenticação, validação, tratamento de erros
+│       ├── routes/             # definição das rotas
+│       ├── schemas/            # schemas Zod
+│       ├── services/           # regras de negócio
+│       ├── types/              # tipagem do Express
+│       ├── utils/              # datas e JWT
+│       ├── app.ts
+│       └── server.ts
+└── frontend/
+    └── src/
+        ├── components/         # UI compartilhada (+ ui/ do shadcn e admin/)
+        ├── contexts/           # contexto de autenticação
+        ├── hooks/              # acesso a dados e estado de tela
+        ├── lib/                # imagens curadas e presets de animação
+        ├── pages/              # Home, Login, Register, Book, MyAppointments, admin/
+        ├── services/           # cliente HTTP e chamadas à API
+        ├── types/              # tipos compartilhados
+        └── utils/              # formatação de datas, preços e durações
 ```
 
-## Requirements
+---
 
-- Node.js 20+
-- A PostgreSQL database (Neon connection string)
+## Rodando localmente
 
-## Getting started
+### Pré-requisitos
+
+- Node.js 20 ou superior
+- Um banco PostgreSQL (o projeto usa o Neon, mas qualquer instância serve)
 
 ### Backend
 
 ```bash
 cd backend
-cp .env.example .env    # fill in DATABASE_URL and JWT_SECRET
+cp .env.example .env     # preencha DATABASE_URL e JWT_SECRET
 npm install
-npm run dev             # http://localhost:3333
+npm run db:migrate       # cria as tabelas
+npm run db:seed          # cria o admin e os serviços iniciais
+npm run dev              # http://localhost:3333
 ```
 
 ### Frontend
 
+Em outro terminal:
+
 ```bash
 cd frontend
-cp .env.example .env    # VITE_API_URL
+cp .env.example .env     # VITE_API_URL=http://localhost:3333
 npm install
-npm run dev             # http://localhost:5173
+npm run dev              # http://localhost:5173
 ```
 
-## Scripts
+### Outros scripts
 
-Both projects share the same script names:
+| Script | Backend | Frontend |
+| --- | --- | --- |
+| `npm run dev` | API com recarga automática | Vite em modo desenvolvimento |
+| `npm run build` | gera o Prisma Client e compila para `dist/` | type-check e build de produção |
+| `npm start` | roda o build de `dist/` | — |
+| `npm run lint` | ESLint | ESLint |
+| `npm run format` | Prettier | Prettier |
+| `npm run typecheck` | TypeScript sem emitir arquivos | TypeScript sem emitir arquivos |
+| `npm run db:migrate` | cria e aplica uma migração | — |
+| `npm run db:deploy` | aplica migrações pendentes (produção) | — |
+| `npm run db:seed` | popula admin e serviços | — |
+| `npm run db:studio` | abre o Prisma Studio | — |
 
-| Script                 | Description                     |
-| ---------------------- | ------------------------------- |
-| `npm run dev`          | Start in development mode       |
-| `npm run build`        | Production build                |
-| `npm run lint`         | Run ESLint                      |
-| `npm run format`       | Format with Prettier            |
-| `npm run typecheck`    | TypeScript check without emit   |
+---
 
-Backend also has `npm start` to run the compiled output from `dist/`.
+## Variáveis de ambiente
 
-### Database scripts (backend)
+### Backend (`backend/.env`)
 
-| Script                 | Description                                  |
-| ---------------------- | -------------------------------------------- |
-| `npm run db:generate`  | Generate the Prisma Client                    |
-| `npm run db:migrate`   | Create and apply a migration (development)    |
-| `npm run db:deploy`    | Apply pending migrations (production)         |
-| `npm run db:seed`      | Seed an admin user and the default services (Corte, Barba, Corte + Barba, Corte infantil) |
-| `npm run db:studio`    | Open Prisma Studio                            |
+| Variável | Obrigatória | Padrão | Descrição |
+| --- | --- | --- | --- |
+| `DATABASE_URL` | Sim | — | String de conexão do PostgreSQL |
+| `JWT_SECRET` | Recomendada | `change-me` | Chave usada para assinar os tokens |
+| `JWT_EXPIRES_IN` | Não | `7d` | Validade do token |
+| `PORT` | Não | `3333` | Porta da API |
+| `NODE_ENV` | Não | `development` | `development`, `test` ou `production` |
+| `CORS_ORIGIN` | Não | `http://localhost:5173` | Origens permitidas, separadas por vírgula |
+| `SEED_ADMIN_EMAIL` | Não | `admin@barbershop.com` | E-mail do admin criado pelo seed |
+| `SEED_ADMIN_PASSWORD` | Não | `admin123` | Senha do admin criado pelo seed |
+| `BUSINESS_TIMEZONE` | Não | `America/Sao_Paulo` | Fuso usado nos cálculos de agenda |
+| `BUSINESS_OPENING_TIME` | Não | `09:00` | Horário de abertura |
+| `BUSINESS_CLOSING_TIME` | Não | `19:00` | Horário de fechamento |
+| `BUSINESS_SLOT_INTERVAL` | Não | `30` | Intervalo entre horários, em minutos |
+| `BUSINESS_WORKING_DAYS` | Não | `1,2,3,4,5,6` | Dias de funcionamento (0 = domingo) |
 
-## Data model
+### Frontend (`frontend/.env`)
 
-- **User** — `id`, `name`, `email` (unique), `phone`, `passwordHash`, `role` (`CLIENT` | `ADMIN`)
-- **Service** — `id`, `name` (unique), `description`, `durationMinutes`, `price`, `active`
-- **Appointment** — `id`, `userId`, `serviceId`, `startsAt`, `endsAt`,
-  `status` (`SCHEDULED` | `COMPLETED` | `CANCELLED`), `notes`
+| Variável | Obrigatória | Padrão | Descrição |
+| --- | --- | --- | --- |
+| `VITE_API_URL` | Não | `http://localhost:3333` | URL base da API |
 
-`endsAt` is derived from the service duration and is used to detect slot conflicts.
+Os arquivos `.env` nunca vão para o repositório — só os `.env.example`.
 
-## CORS
+---
 
-The API only answers browsers coming from the origins listed in `CORS_ORIGIN`
-(one, or several separated by commas; a trailing slash is ignored). The
-development default is `http://localhost:5173`, and production looks like:
+## Endpoints da API
 
-```bash
-CORS_ORIGIN="https://fadebarbearia.com.br,https://www.fadebarbearia.com.br"
-```
+Rotas protegidas esperam o header `Authorization: Bearer <token>`.
 
-Credentials are enabled and the allowed methods are `GET, POST, PATCH, DELETE,
-OPTIONS` with the `Content-Type` and `Authorization` headers. Requests without
-an `Origin` header (curl, health checks, server to server) are always allowed;
-an unlisted origin gets `403`. The allowed origins are printed on boot.
+| Método | Rota | Acesso | Descrição |
+| --- | --- | --- | --- |
+| `GET` | `/health` | Público | Verificação de saúde da API |
+| `POST` | `/auth/register` | Público | Cria uma conta de cliente e devolve o token |
+| `POST` | `/auth/login` | Público | Autentica e devolve o token |
+| `GET` | `/auth/me` | Autenticado | Dados do usuário logado |
+| `GET` | `/services` | Público | Lista serviços ativos (`?includeInactive=true` para admin) |
+| `GET` | `/services/:id` | Público | Detalhe de um serviço |
+| `POST` | `/services` | Admin | Cria um serviço |
+| `PATCH` | `/services/:id` | Admin | Atualiza um serviço |
+| `DELETE` | `/services/:id` | Admin | Exclui o serviço ou o desativa, se houver agendamentos |
+| `GET` | `/appointments/availability` | Público | Horários livres de `?serviceId=&date=AAAA-MM-DD` |
+| `POST` | `/appointments` | Autenticado | Cria um agendamento |
+| `GET` | `/appointments/me` | Autenticado | Agendamentos do usuário logado |
+| `PATCH` | `/appointments/:id/cancel` | Autenticado | Cancela (dono do agendamento ou admin) |
+| `GET` | `/appointments/agenda` | Admin | Agenda do dia (`?date=`, padrão hoje) |
+| `PATCH` | `/appointments/:id/status` | Admin | Altera o status do agendamento |
 
-## Environment variables
+### Regras aplicadas no agendamento
 
-Real values live in `.env` files, which are never committed. See `backend/.env.example`
-and `frontend/.env.example` for the expected keys.
+- O horário precisa estar no futuro e caber inteiro dentro do expediente
+- O serviço precisa estar ativo
+- Sobreposição com outro agendamento ativo retorna `409`
+- Agendamentos cancelados liberam o horário; concluídos não podem ser cancelados
 
-## API
+---
 
-| Method | Route            | Auth   | Description                          |
-| ------ | ---------------- | ------ | ------------------------------------ |
-| GET    | `/health`        | –      | Service health check                 |
-| POST   | `/auth/register` | –      | Create a client account, returns JWT |
-| POST   | `/auth/login`    | –      | Log in, returns JWT                  |
-| GET    | `/auth/me`       | Bearer | Current user profile                 |
+## Autora
 
-| GET    | `/services`                     | –      | List services (`?includeInactive=true` for admins) |
-| GET    | `/services/:id`                 | –      | Service details                                    |
-| POST   | `/services`                     | Admin  | Create a service                                   |
-| PATCH  | `/services/:id`                 | Admin  | Update a service                                   |
-| DELETE | `/services/:id`                 | Admin  | Delete, or deactivate if it has appointments       |
-| GET    | `/appointments/availability`    | –      | Free slots for `?serviceId=&date=YYYY-MM-DD`       |
-| POST   | `/appointments`                 | Bearer | Book a slot                                        |
-| GET    | `/appointments/me`              | Bearer | Appointments of the logged in user                 |
-| PATCH  | `/appointments/:id/cancel`      | Bearer | Cancel (owner or admin)                            |
-| GET    | `/appointments/agenda`          | Admin  | Day agenda (`?date=`, defaults to today)           |
-| PATCH  | `/appointments/:id/status`      | Admin  | Change status                                      |
+**Maria Carolina Magnani de Lyra**
 
-Protected routes expect the header `Authorization: Bearer <token>`.
-
-## Booking rules
-
-- Appointments must start in the future and fit inside the business hours
-  (`BUSINESS_*` variables, default Mon–Sat 09:00–19:00, `America/Sao_Paulo`).
-- `endsAt` is derived from the service duration.
-- A slot is rejected with `409` when it overlaps another `SCHEDULED` appointment;
-  the check runs inside a serializable transaction.
-- Cancelled appointments release the slot again.
-
-## Design system
-
-The frontend ships with a small, self-contained design system in
-`frontend/src/index.css`:
-
-- **Palette** — deep blue-tinted neutrals (`ink-*`), muted text greys (`mist-*`)
-  and a single accent, a refined gold (`gold-*`).
-- **Typography** — SF Pro when the device has it, Inter Tight as the web
-  fallback. Rigid scale (`text-eyebrow` → `text-hero`) with negative tracking on
-  the large sizes and weight contrast inside headlines (`.text-light`).
-- **Surfaces** — `.glass` (blur 40px + saturate 180%, 1px white border and a
-  gradient light line on the top edge) for chrome and panels, `.surface` as its
-  solid sibling for long lists, `.field` for inputs.
-- **Motion** — `animate-fade-up`, `animate-fade-in`, `animate-scale-in` and a
-  shimmer used by the skeleton loaders.
-- **Photography** — curated Unsplash images served straight from the CDN
-  (`frontend/src/lib/images.ts`, no API key): dark, high contrast, detail driven
-  (chair, clippers, razor, tools) with no faces in the foreground. Every `<img>`
-  carries the `.photo` class (one brightness/contrast/saturation treatment) and
-  every overlay uses the same bottom-up `.photo-scrim` gradient.
-- **Dense pickers** — `DateStrip` (scrollable day selector) and `TimePills`
-  (scrollable time slots), both with a filled state in the accent colour.
-
-## UI toolkit
-
-- **shadcn/ui** components live in `frontend/src/components/ui` (`components.json`
-  is configured, so `npx shadcn@latest add <component>` works). They were adapted
-  to the palette above instead of bringing their own theme: Dialog, Badge,
-  Skeleton, Input/Textarea, Label, Select and the Sonner toaster.
-- **Radix UI** powers the accessible primitives behind those components.
-- **framer-motion** handles the step transitions, list stagger (50 ms apart),
-  `layoutId` pills on the date/time pickers and admin tabs, and a 1.02 hover
-  scale on cards. Everything runs on one spring (stiffness 300, damping 30,
-  mass 0.8 — `src/lib/motion.ts`). `MotionConfig reducedMotion="user"` plus a
-  `prefers-reduced-motion` block in the CSS disable movement for users who ask
-  for it.
-- **lucide-react** provides the icon set.
-- **sonner** shows the result of actions (booking, cancelling, service changes);
-  inline alerts are reserved for load failures and empty states.
-
-## Frontend routes
-
-| Route           | Access | Description                                      |
-| --------------- | ------ | ------------------------------------------------ |
-| `/`             | Public | Landing page                                     |
-| `/login`        | Public | Sign in                                          |
-| `/register`     | Public | Create a client account                          |
-| `/book`         | Client | Booking flow: service → date → time              |
-| `/appointments` | Client | Upcoming bookings and history, with cancelling   |
-| `/admin`        | Admin  | Day agenda and service management                |
-
-## Roadmap
-
-- [x] 1. Project setup (TypeScript, ESLint/Prettier, env files)
-- [x] 2. Database modeling with Prisma (User, Service, Appointment)
-- [x] 3. Auth: sign up and login with JWT + bcrypt
-- [x] 4. Services CRUD (admin) and appointments with slot conflict rules
-- [x] 5. Sign up and login screens
-- [x] 6. Booking flow (service → date → available time)
-- [x] 7. "My appointments" page with cancel
-- [x] 8. Admin panel: manage services and view the day's agenda
-- [x] 9. Visual redesign: design system, typography and polished UI
-- [x] 10. shadcn/ui primitives, toasts and motion
-- [x] 11. Brazilian Portuguese interface and "Fade Barbearia" branding
-- [x] 12. Premium visual pass: photography, denser pickers, new type pairing
-- [x] 13. Deep refinement: glass material, spring motion, rigid type scale
+- GitHub: [@carollyra](https://github.com/carollyra)
+- LinkedIn: [carolina-magnani](https://www.linkedin.com/in/carolina-magnani-383141353)
