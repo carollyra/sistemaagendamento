@@ -7,6 +7,7 @@ const envSchema = z.object({
   JWT_EXPIRES_IN: z.string().min(1).default('7d'),
   PORT: z.coerce.number().int().positive().default(3333),
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  /** One origin, or several separated by commas. */
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
 });
 
@@ -17,7 +18,16 @@ if (!parsed.success) {
   process.exit(1);
 }
 
+const corsOrigins = parsed.data.CORS_ORIGIN.split(',')
+  .map((origin) => origin.trim().replace(/\/$/, ''))
+  .filter(Boolean);
+
+if (corsOrigins.length === 0) {
+  console.error('CORS_ORIGIN must list at least one origin');
+  process.exit(1);
+}
+
 export const env = {
   ...parsed.data,
-  corsOrigins: parsed.data.CORS_ORIGIN.split(',').map((origin) => origin.trim()),
+  corsOrigins,
 };

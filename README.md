@@ -93,6 +93,21 @@ Backend also has `npm start` to run the compiled output from `dist/`.
 
 `endsAt` is derived from the service duration and is used to detect slot conflicts.
 
+## CORS
+
+The API only answers browsers coming from the origins listed in `CORS_ORIGIN`
+(one, or several separated by commas; a trailing slash is ignored). The
+development default is `http://localhost:5173`, and production looks like:
+
+```bash
+CORS_ORIGIN="https://fadebarbearia.com.br,https://www.fadebarbearia.com.br"
+```
+
+Credentials are enabled and the allowed methods are `GET, POST, PATCH, DELETE,
+OPTIONS` with the `Content-Type` and `Authorization` headers. Requests without
+an `Origin` header (curl, health checks, server to server) are always allowed;
+an unlisted origin gets `403`. The allowed origins are printed on boot.
+
 ## Environment variables
 
 Real values live in `.env` files, which are never committed. See `backend/.env.example`
